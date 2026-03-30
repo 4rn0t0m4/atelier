@@ -1,0 +1,1 @@
+import{m as e}from"./module.esm-CwKKyv8g.js";window.Alpine=e;e.store("sidebar",{isOpen:!1,isHovered:!1,isMobileOpen:!1,toggle(){this.isOpen=!this.isOpen},openMobile(){this.isMobileOpen=!0},closeMobile(){this.isMobileOpen=!1}});e.start();
