@@ -1,0 +1,49 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/arnaud/Sites/atelier/**)",
+      "Bash(find /Users/arnaud/Sites/atelier -type f -name *.sql)",
+      "Bash(php artisan:*)",
+      "Bash(mysql -u root atelier_laravel -e \"SELECT COUNT\\(*\\) as users FROM users\")",
+      "Bash(php -l app/Services/AddonPriceCalculator.php)",
+      "Bash(php -l app/Services/CartService.php)",
+      "Bash(php -l app/Services/DiscountEngine.php)",
+      "Bash(php -l app/Services/OrderService.php)",
+      "Bash(php -l app/Services/BoxtalAuthService.php)",
+      "Bash(find /Users/arnaud/Sites/institut/app/Http/Controllers -name *Webhook* -o -name *Stripe* -o -name *PayPal*)",
+      "Bash(find /Users/arnaud/Sites/institut -type f -path *Services* -name *.php)",
+      "Bash(grep -r \"STRIPE\\\\|PAYPAL\" /Users/arnaud/Sites/atelier-laravel/.env*)",
+      "Bash(find /Users/arnaud/Sites/atelier-laravel/app/Http/Requests -name *.php -type f)",
+      "Bash(find /Users/arnaud/Sites/atelier/wp-content -name *logo* -type f)",
+      "Bash(find /Users/arnaud/Sites/atelier/wp-content/uploads -name *logo* -o -name *atelier*aubin*)",
+      "Bash(while read:*)",
+      "Bash(do identify:*)",
+      "Bash(done)",
+      "Read(//Users/arnaud/Sites/atelier-laravel/**)",
+      "WebFetch(domain:www.atelier-aubin.fr)",
+      "Bash(grep -r \"robots\\\\|sitemap\" /Users/arnaud/Sites/atelier-laravel/app --include=*.php)",
+      "Bash(grep -r \"robots\\\\|og:\\\\|twitter:\" /Users/arnaud/Sites/atelier-laravel/resources/views --include=*.blade.php)",
+      "Bash(grep -r \"canonical\\\\|description\\\\|keywords\" /Users/arnaud/Sites/atelier-laravel/app/Http/Controllers --include=*.php)",
+      "Bash(grep -r \"GA\\\\|google.*analytics\\\\|gtag\\\\|pixel\\\\|ANALYTICS\" /Users/arnaud/Sites/atelier-laravel --include=*.php --include=*.blade.php --include=*.env*)",
+      "Bash(xargs cat:*)",
+      "Bash(grep -r \"@push.*head\\\\|@stack.*head\" /Users/arnaud/Sites/atelier-laravel/resources/views --include=*.blade.php)",
+      "Bash(grep -r \"newsletter\\\\|brevo\\\\|cookie\\\\|consent\\\\|favorites\\\\|wishlist\" /Users/arnaud/Sites/atelier-laravel/app --include=*.php)",
+      "Bash(grep -rn \"StockNotification\\\\|low_stock\" /Users/arnaud/Sites/atelier-laravel/app --include=*.php)",
+      "Bash(grep -rn \"paypal\\\\|PayPal\\\\|PAYPAL\" /Users/arnaud/Sites/atelier-laravel/resources/views --include=*.blade.php)",
+      "Bash(grep -rn \"review_response\\\\|admin_response\" /Users/arnaud/Sites/atelier-laravel --include=*.php --include=*.blade.php)",
+      "WebFetch(domain:127.0.0.1)",
+      "Bash(ls /Users/arnaud/Sites/atelier/wp-content/uploads/2022/03/typographie* /Users/arnaud/Sites/atelier/wp-content/uploads/2023/02/typographie*)",
+      "Bash(find /Users/arnaud/Sites/atelier/wp-content/uploads -name typographie*)",
+      "Bash(find /Users/arnaud/Sites/institut/resources -name *checkout* -o -name *order*)",
+      "Bash(find /Users/arnaud/Sites/institut/resources/js -type f -name *.js -o -name *.vue -o -name *.jsx)",
+      "Bash(grep -n \"boxtal.parcel\\\\|parcel-points\" /Users/arnaud/Sites/institut/routes/*.php)",
+      "Bash(grep -rn \"->pushOrder\\\\|pushOrder\\(\" /Users/arnaud/Sites/institut --include=*.php)",
+      "Bash(ls /Users/arnaud/Sites/atelier-laravel/storage/app/wp_*.json)"
+    ],
+    "additionalDirectories": [
+      "/Users/arnaud/Sites/atelier/wp-content/uploads/2022/03",
+      "/Users/arnaud/Sites/atelier/wp-content/uploads/2022/02",
+      "/Users/arnaud/Sites/atelier/wp-content/themes/ashe-child/assets/fonts"
+    ]
+  }
+}

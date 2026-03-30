@@ -1,0 +1,10 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /panier
+Disallow: /commande
+Disallow: /mon-compte
+Disallow: /connexion
+Disallow: /inscription
+Disallow: /api/
+
+Sitemap: https://atelier-aubin.fr/sitemap.xml
