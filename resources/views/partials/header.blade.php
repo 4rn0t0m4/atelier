@@ -190,7 +190,8 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="cartOpen = false"
-         class="fixed inset-0 bg-black/40 z-[60]"></div>
+         class="fixed inset-0 bg-black/40 z-[60]"
+         style="position:fixed;top:0;left:0;right:0;bottom:0"></div>
 
     {{-- Panel --}}
     <div x-show="cartOpen"
@@ -200,7 +201,8 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="translate-x-0"
          x-transition:leave-end="-translate-x-full"
-         class="fixed inset-y-0 left-0 w-80 sm:w-96 bg-white shadow-2xl z-[70] flex flex-col">
+         class="fixed inset-y-0 left-0 w-80 sm:w-96 bg-white shadow-2xl z-[70] flex flex-col"
+         style="position:fixed;top:0;bottom:0;left:0">
 
         {{-- En-tête panel --}}
         <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
@@ -258,7 +260,8 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          @click="close()"
-         class="fixed inset-0 bg-black/50 z-[80]"></div>
+         class="fixed inset-0 bg-black/50 z-[80]"
+         style="position:fixed;top:0;left:0;right:0;bottom:0"></div>
 
     {{-- Panneau recherche --}}
     <div x-show="searchOpen"
@@ -268,7 +271,8 @@
          x-transition:leave="transition ease-in duration-150"
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 -translate-y-4"
-         class="fixed inset-x-0 top-0 z-[90] bg-white shadow-2xl">
+         class="fixed inset-x-0 top-0 z-[90] bg-white shadow-2xl"
+         style="position:fixed;top:0;left:0;right:0">
 
         <div class="max-w-2xl mx-auto px-4 py-6">
             {{-- Champ de recherche --}}

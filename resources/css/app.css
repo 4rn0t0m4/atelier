@@ -18,6 +18,8 @@
     --font-serif: Georgia, "Times New Roman", serif;
 }
 
+[x-cloak] { display: none !important; }
+
 html {
     scroll-behavior: smooth;
 }
