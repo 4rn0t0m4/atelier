@@ -198,7 +198,7 @@ class CartService
         }
 
         $productIds = array_unique(array_column($cart, 'product_id'));
-        $products = Product::with('category')->whereIn('id', $productIds)->get()->keyBy('id');
+        $products = Product::with('category.parent')->whereIn('id', $productIds)->get()->keyBy('id');
 
         return array_map(function (array $item) use ($products) {
             $product = $products->get($item['product_id']);

@@ -212,6 +212,39 @@
                     </div>
                 </section>
 
+                {{-- Création de compte --}}
+                @guest
+                <section x-data="{ createAccount: {{ old('create_account') ? 'true' : 'false' }} }">
+                    <h2 class="text-base font-semibold text-brand-900 mb-4 pb-2 border-b border-brand-100">
+                        Créer un compte
+                    </h2>
+                    <label class="flex items-center gap-3 cursor-pointer">
+                        <input type="checkbox" name="create_account" value="1"
+                               x-model="createAccount"
+                               class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
+                        <span class="text-sm text-gray-700">Créer un compte pour suivre mes commandes</span>
+                    </label>
+                    <div x-show="createAccount" x-cloak class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Mot de passe *</label>
+                            <input type="password" name="password"
+                                   class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('password') border-red-400 @enderror"
+                                   minlength="8">
+                            @error('password')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-700 mb-1">Confirmer le mot de passe *</label>
+                            <input type="password" name="password_confirmation"
+                                   class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
+                                   minlength="8">
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2" x-show="createAccount" x-cloak>
+                        Votre compte sera créé avec l'adresse e-mail renseignée ci-dessus.
+                    </p>
+                </section>
+                @endguest
+
                 {{-- Adresse de livraison --}}
                 <section>
                     <div class="flex items-center justify-between mb-4 pb-2 border-b border-brand-100">

@@ -43,6 +43,8 @@ class CheckoutStoreRequest extends FormRequest
             'relay_network' => 'nullable|string|max:50',
             'coupon_code' => 'nullable|string|max:50',
             'payment_method' => 'required|in:stripe,paypal',
+            'create_account' => 'nullable|boolean',
+            'password' => 'nullable|required_if:create_account,1|string|min:8|confirmed',
         ];
     }
 
@@ -58,6 +60,14 @@ class CheckoutStoreRequest extends FormRequest
 
             if ($this->shipping_method && ! in_array($this->shipping_method, $allowed)) {
                 $validator->errors()->add('shipping_method', 'Ce mode de livraison n\'est pas disponible pour le pays sélectionné.');
+            }
+
+            // Vérifier que l'email n'est pas déjà associé à un compte
+            if ($this->boolean('create_account') && ! auth()->check()) {
+                $exists = \App\Models\User::where('email', $this->billing_email)->exists();
+                if ($exists) {
+                    $validator->errors()->add('billing_email', 'Un compte existe déjà avec cette adresse e-mail. Connectez-vous ou utilisez une autre adresse.');
+                }
             }
         });
     }
@@ -75,6 +85,9 @@ class CheckoutStoreRequest extends FormRequest
             'billing_country.required' => 'Le pays est obligatoire.',
             'shipping_method.required' => 'Veuillez choisir un mode de livraison.',
             'relay_point_code.required_if' => 'Veuillez sélectionner un point relais.',
+            'password.required_if' => 'Le mot de passe est obligatoire pour créer un compte.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
         ];
     }
 }

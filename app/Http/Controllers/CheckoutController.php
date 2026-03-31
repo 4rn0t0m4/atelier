@@ -11,7 +11,9 @@ use App\Models\Setting;
 use App\Services\CartService;
 use App\Services\DiscountEngine;
 use App\Services\OrderService;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -142,6 +144,29 @@ class CheckoutController extends Controller
             $request->relay_point_name,
             $request->relay_point_address,
         );
+
+        // Création de compte si demandé
+        if (! auth()->check() && $request->boolean('create_account') && $request->filled('password')) {
+            $existing = User::where('email', $request->billing_email)->first();
+
+            if (! $existing) {
+                $user = User::create([
+                    'name' => $request->billing_first_name . ' ' . $request->billing_last_name,
+                    'email' => $request->billing_email,
+                    'password' => $request->password,
+                    'first_name' => $request->billing_first_name,
+                    'last_name' => $request->billing_last_name,
+                    'phone' => $request->billing_phone,
+                    'address_1' => $request->billing_address_1,
+                    'address_2' => $request->billing_address_2,
+                    'city' => $request->billing_city,
+                    'postcode' => $request->billing_postcode,
+                    'country' => $request->billing_country,
+                ]);
+
+                Auth::login($user);
+            }
+        }
 
         $paymentMethod = $request->input('payment_method', 'stripe');
 

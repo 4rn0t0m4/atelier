@@ -18,6 +18,7 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
+/public/wp-content
 .env.local
 sauvegarde.sql
 /public/sitemap.xml

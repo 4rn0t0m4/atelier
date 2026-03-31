@@ -11,6 +11,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Boutique
 Route::get('/boutique', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/boutique/recherche', [ShopController::class, 'search'])->name('shop.search');
 Route::post('/boutique/{product}/avis', [ShopController::class, 'storeReview'])->name('shop.review.store')->middleware('throttle:5,1');
 Route::get('/boutique/{parent}/{child}/{product}', [ShopController::class, 'show'])->name('shop.show');
 Route::get('/boutique/{parent}/{child?}', [ShopController::class, 'categoryOrProduct'])->name('shop.category');
@@ -77,6 +79,9 @@ Route::prefix('/mon-compte')->name('account.')->middleware('auth')->group(functi
 // Contact
 // Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 // Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
 // Pages statiques (wildcard — en dernier)
 Route::get('/{slug}', [PageController::class, 'show'])->name('page.show')

@@ -26,7 +26,9 @@ class SendReviewRequests extends Command
 
         foreach ($orders as $order) {
             try {
-                Mail::to($order->billing_email)->send(new ReviewRequest($order));
+                Mail::to($order->billing_email)
+                    ->bcc('contact@atelier-aubin.fr')
+                    ->send(new ReviewRequest($order));
                 $order->update(['review_requested_at' => now()]);
                 $sent++;
                 $this->info("  OK #{$order->number} -> {$order->billing_email}");

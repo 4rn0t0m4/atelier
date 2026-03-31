@@ -189,4 +189,32 @@ class ShopController extends Controller
 
         return back()->with('review_success', 'Merci pour votre avis ! Il sera publié après validation.');
     }
+
+    public function search(Request $request)
+    {
+        $q = trim($request->input('q', ''));
+
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $products = Product::with(['category.parent', 'featuredImage'])
+            ->active()
+            ->where(function ($query) use ($q) {
+                $query->where('name', 'like', "%{$q}%")
+                    ->orWhere('short_description', 'like', "%{$q}%");
+            })
+            ->orderBy('name')
+            ->limit(8)
+            ->get()
+            ->map(fn (Product $p) => [
+                'name' => $p->name,
+                'url' => $p->url(),
+                'price' => number_format($p->sale_price ?? $p->price, 2, ',', ' ') . ' €',
+                'image' => $p->featuredImage?->url,
+                'category' => $p->category?->name,
+            ]);
+
+        return response()->json($products);
+    }
 }

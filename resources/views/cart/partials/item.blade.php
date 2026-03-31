@@ -2,8 +2,10 @@
 <div id="cart-item-{{ $item['key'] }}"
      class="flex items-start gap-4 bg-white border border-gray-100 rounded-lg p-4">
 
+    @php $productUrl = $item['product']?->url() ?? '#'; @endphp
+
     {{-- Image produit --}}
-    <div class="w-16 h-16 rounded flex-shrink-0 overflow-hidden bg-gray-100">
+    <a href="{{ $productUrl }}" class="w-16 h-16 rounded flex-shrink-0 overflow-hidden bg-gray-100 block">
         @if(!empty($item['image']))
             <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover">
         @else
@@ -14,11 +16,11 @@
                 </svg>
             </div>
         @endif
-    </div>
+    </a>
 
     {{-- Details --}}
     <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-gray-800 truncate">{{ $item['name'] }}</p>
+        <a href="{{ $productUrl }}" class="text-sm font-medium text-gray-800 truncate block hover:text-brand-700 transition">{{ $item['name'] }}</a>
         @if(!empty($item['addons']))
             <ul class="mt-1 space-y-0.5">
                 @foreach($item['addons'] as $addon)
