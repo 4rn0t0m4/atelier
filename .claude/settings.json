@@ -41,7 +41,9 @@
       "Bash(ls /Users/arnaud/Sites/atelier-laravel/storage/app/wp_*.json)",
       "Bash(composer update:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ln -s /Users/arnaud/Sites/atelier/wp-content/uploads /Users/arnaud/Sites/atelier-laravel/public/wp-content/uploads)",
+      "Bash(grep -n \"firstOrFail\\\\|abort\" /Users/arnaud/Sites/atelier-laravel/app/Http/Controllers/*.php)"
     ],
     "additionalDirectories": [
       "/Users/arnaud/Sites/atelier/wp-content/uploads/2022/03",

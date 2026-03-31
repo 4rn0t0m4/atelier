@@ -68,13 +68,13 @@
                 <table class="w-full">
                     <thead>
                         <tr class="border-b border-gray-200">
+                            <th class="px-2 py-3 w-10"></th>
                             <th class="px-5 py-3 text-left text-sm font-medium text-gray-500">N°</th>
                             <th class="px-5 py-3 text-left text-sm font-medium text-gray-500">Client</th>
                             <th class="px-5 py-3 text-left text-sm font-medium text-gray-500">Statut</th>
                             <th class="px-5 py-3 text-left text-sm font-medium text-gray-500">Livraison</th>
                             <th class="px-5 py-3 text-right text-sm font-medium text-gray-500">Total</th>
                             <th class="px-5 py-3 text-right text-sm font-medium text-gray-500">Date</th>
-                            <th class="px-5 py-3 text-right text-sm font-medium text-gray-500"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,6 +82,20 @@
                             <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer transition"
                                 :class="activeOrderId === {{ $order->id }} && 'bg-brand-50 hover:bg-brand-50'"
                                 @click="open({{ $order->id }})">
+                                <td class="px-2 py-4" @click.stop>
+                                    @if(in_array($order->status, ['pending', 'cancelled']))
+                                        <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
+                                              onsubmit="return confirm('Supprimer la commande {{ $order->number }} ?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Supprimer">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
                                 <td class="px-5 py-4">
                                     <span class="text-sm font-medium text-brand-600">{{ $order->number }}</span>
                                 </td>
@@ -100,20 +114,6 @@
                                 </td>
                                 <td class="px-5 py-4 text-sm text-right text-gray-500">
                                     {{ $order->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="px-5 py-4 text-right" @click.stop>
-                                    @if(in_array($order->status, ['pending', 'cancelled']))
-                                        <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
-                                              onsubmit="return confirm('Supprimer la commande {{ $order->number }} ?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition" title="Supprimer">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    @endif
                                 </td>
                             </tr>
                         @empty
