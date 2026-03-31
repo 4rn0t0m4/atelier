@@ -44,8 +44,8 @@
                             <td>
                                 {{ $item->product_name }}
                                 @foreach($item->addons as $addon)
-                                    <br><span class="addon">+ {{ $addon->group_name }}: {{ $addon->addon_name }}
-                                        @if($addon->price > 0)({{ number_format($addon->price, 2, ',', ' ') }} €)@endif
+                                    <br><span class="addon">+ {{ $addon->addon_label }}: {{ $addon->addon_value }}
+                                        @if($addon->addon_price > 0)({{ number_format($addon->addon_price, 2, ',', ' ') }} €)@endif
                                     </span>
                                 @endforeach
                             </td>

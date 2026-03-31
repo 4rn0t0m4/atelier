@@ -38,7 +38,10 @@
       "Bash(find /Users/arnaud/Sites/institut/resources/js -type f -name *.js -o -name *.vue -o -name *.jsx)",
       "Bash(grep -n \"boxtal.parcel\\\\|parcel-points\" /Users/arnaud/Sites/institut/routes/*.php)",
       "Bash(grep -rn \"->pushOrder\\\\|pushOrder\\(\" /Users/arnaud/Sites/institut --include=*.php)",
-      "Bash(ls /Users/arnaud/Sites/atelier-laravel/storage/app/wp_*.json)"
+      "Bash(ls /Users/arnaud/Sites/atelier-laravel/storage/app/wp_*.json)",
+      "Bash(composer update:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "additionalDirectories": [
       "/Users/arnaud/Sites/atelier/wp-content/uploads/2022/03",
