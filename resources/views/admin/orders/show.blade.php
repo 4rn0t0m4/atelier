@@ -200,7 +200,7 @@
                         Telecharger la facture
                     </a>
 
-                    @if(!$order->isPaid())
+                    @if(in_array($order->status, ['pending', 'cancelled']))
                         <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
                               onsubmit="return confirm('Supprimer cette commande ?')">
                             @csrf

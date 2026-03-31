@@ -187,7 +187,7 @@
                 </svg>
                 Page complète
             </a>
-            @if(!$order->isPaid())
+            @if(in_array($order->status, ['pending', 'cancelled']))
                 <form data-panel-form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
                       data-confirm="Supprimer cette commande ?">
                     @csrf

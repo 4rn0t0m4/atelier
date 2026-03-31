@@ -185,14 +185,18 @@ class OrderController extends Controller
 
     public function destroy(Request $request, Order $order)
     {
-        if ($order->isPaid()) {
-            $msg = 'Impossible de supprimer une commande payée.';
+        if (!in_array($order->status, ['pending', 'cancelled'])) {
+            $msg = 'Seules les commandes non réglées ou annulées peuvent être supprimées.';
 
             return $request->ajax()
                 ? response()->json(['error' => $msg])
                 : redirect()->route('admin.orders.show', $order)->with('error', $msg);
         }
 
+        // Delete addons, then items, then order
+        foreach ($order->items as $item) {
+            $item->addons()->delete();
+        }
         $order->items()->delete();
         $order->delete();
 
