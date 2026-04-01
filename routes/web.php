@@ -83,10 +83,6 @@ Route::prefix('/mon-compte')->name('account.')->middleware('auth')->group(functi
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
-// Pages statiques (wildcard — en dernier)
-Route::get('/{slug}', [PageController::class, 'show'])->name('page.show')
-    ->where('slug', '^(?!boutique|panier|commande|connexion|inscription|deconnexion|mon-compte|stripe|paypal|admin|api|contact)[a-z0-9-]+(/[a-z0-9-]+)*$');
-
 // Redirections legacy WP (301)
 Route::get('/produit/{slug}', [LegacyRedirectController::class, 'product']);
 Route::get('/categorie-produit/{slug}', [LegacyRedirectController::class, 'category']);
@@ -94,3 +90,7 @@ Route::redirect('/shop', '/boutique', 301);
 Route::redirect('/mon-compte', '/connexion', 301);
 Route::redirect('/panier-2', '/panier', 301);
 Route::redirect('/commande-2', '/commande', 301);
+
+// Pages statiques (wildcard — en dernier)
+Route::get('/{slug}', [PageController::class, 'show'])->name('page.show')
+    ->where('slug', '^(?!boutique|panier|commande|connexion|inscription|deconnexion|mon-compte|stripe|paypal|admin|api|contact|produit|categorie-produit)[a-z0-9-]+(/[a-z0-9-]+)*$');
