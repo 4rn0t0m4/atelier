@@ -53,8 +53,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', 'unique:products,slug'],
-            'short_description' => 'nullable|string|max:500',
-            'description' => 'nullable|string|max:10000',
+            'short_description' => 'nullable|string|max:65000',
+            'description' => 'nullable|string|max:65000',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'sku' => 'nullable|string|max:100',
@@ -67,6 +67,8 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
+            'featured_image_id' => 'nullable|integer|exists:media,id',
+            'gallery_image_ids' => 'nullable|json',
         ]);
 
         if (empty($validated['slug'])) {
@@ -76,6 +78,8 @@ class ProductController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['manage_stock'] = $request->boolean('manage_stock');
+        $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
+        $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 
         $validated['excluded_global_group_ids'] = $this->computeExcludedGlobalIds($request);
 
@@ -88,7 +92,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load('addonGroups');
+        $product->load(['addonGroups', 'featuredImage']);
         $categories = ProductCategory::orderBy('name')->get();
         $addonGroups = ProductAddonGroup::with('addons')->orderBy('sort_order')->get();
 
@@ -100,8 +104,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', 'unique:products,slug,' . $product->id],
-            'short_description' => 'nullable|string|max:500',
-            'description' => 'nullable|string|max:10000',
+            'short_description' => 'nullable|string|max:65000',
+            'description' => 'nullable|string|max:65000',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'nullable|numeric|min:0',
             'sku' => 'nullable|string|max:100',
@@ -114,6 +118,8 @@ class ProductController extends Controller
             'is_featured' => 'boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
+            'featured_image_id' => 'nullable|integer|exists:media,id',
+            'gallery_image_ids' => 'nullable|json',
         ]);
 
         if (empty($validated['slug'])) {
@@ -123,6 +129,8 @@ class ProductController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['manage_stock'] = $request->boolean('manage_stock');
+        $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
+        $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 
         $validated['excluded_global_group_ids'] = $this->computeExcludedGlobalIds($request);
 

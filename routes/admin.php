@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BoxtalSubscriptionController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PageController;
@@ -45,6 +46,9 @@ Route::put('reglages', [SettingController::class, 'update'])->name('admin.settin
 Route::get('boxtal-subscriptions', [BoxtalSubscriptionController::class, 'index'])->name('admin.boxtal-subscriptions.index');
 Route::post('boxtal-subscriptions', [BoxtalSubscriptionController::class, 'store'])->name('admin.boxtal-subscriptions.store');
 Route::delete('boxtal-subscriptions/{id}', [BoxtalSubscriptionController::class, 'destroy'])->name('admin.boxtal-subscriptions.destroy');
+
+// Medias
+Route::post('media/upload', [MediaController::class, 'upload'])->name('admin.media.upload');
 
 // Produits
 Route::get('produits', [ProductController::class, 'index'])->name('admin.products.index');
