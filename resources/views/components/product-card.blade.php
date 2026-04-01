@@ -60,7 +60,16 @@
         {{-- Prix + ajout panier --}}
         <div class="flex items-center justify-between mt-3">
             <div>
-                @if($product->sale_price)
+                @if($product->price == 0 && $product->category && in_array($product->category->slug, ['lettres-en-bois', 'lettre-en-bois-3d']))
+                    @php
+                        $minPrice = $product->getAllAddonGroups()
+                            ->flatMap->addons
+                            ->where('label', 'Taille des lettres')
+                            ->flatMap(fn($a) => collect($a->options)->pluck('price'))
+                            ->filter()->min() ?: 0;
+                    @endphp
+                    <span class="text-sm font-semibold text-brand-700">Dès {{ number_format($minPrice, 2, ',', ' ') }} € / lettre</span>
+                @elseif($product->sale_price)
                     <span class="text-xs line-through mr-1 text-brand-400">{{ number_format($product->price, 2, ',', ' ') }} €</span>
                     <span class="text-sm font-semibold text-brand-700">{{ number_format($product->sale_price, 2, ',', ' ') }} €</span>
                 @else

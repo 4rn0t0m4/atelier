@@ -220,7 +220,16 @@ $breadcrumbJsonLd = json_encode([
 
             {{-- Prix --}}
             <div class="flex items-baseline gap-3 mb-6">
-                @if($product->sale_price)
+                @if($product->price == 0 && $product->category && in_array($product->category->slug, ['lettres-en-bois', 'lettre-en-bois-3d']))
+                    @php
+                        $minLetterPrice = $addonGroups->flatMap->addons
+                            ->where('label', 'Taille des lettres')
+                            ->flatMap(fn($a) => collect($a->options)->pluck('price'))
+                            ->filter()->min() ?: 0;
+                    @endphp
+                    <span class="text-3xl font-bold text-brand-700">A partir de {{ number_format($minLetterPrice, 2, ',', ' ') }} €</span>
+                    <span class="text-base text-brand-400">/ lettre</span>
+                @elseif($product->sale_price)
                     <span class="text-3xl font-bold text-brand-700">{{ number_format($product->sale_price, 2, ',', ' ') }} €</span>
                     <span class="text-base line-through text-brand-400">{{ number_format($product->price, 2, ',', ' ') }} €</span>
                 @else
@@ -259,6 +268,7 @@ $breadcrumbJsonLd = json_encode([
                         $typoAddon = $allAddons->first(fn($a) => $a->label === 'Typographie' && $a->type === 'select');
                         $tailleAddon = $allAddons->first(fn($a) => $a->label === 'Taille des lettres' && $a->type === 'select');
                         $prixLettresAddon = $allAddons->first(fn($a) => $a->label === 'Prix des lettres' && $a->type === 'select');
+                        $nbLettresAddon = $allAddons->first(fn($a) => $a->label === 'Nombre de lettres' && $a->type === 'select');
                     @endphp
                     <div class="space-y-6">
                         @foreach($addonGroups as $group)
@@ -279,6 +289,10 @@ $breadcrumbJsonLd = json_encode([
 
                     @if($prenomMotAddon && $tailleAddon && $prixLettresAddon)
                         <x-letter-price :prenom-addon-id="$prenomMotAddon->id" :taille-addon-id="$tailleAddon->id" :prix-addon-id="$prixLettresAddon->id" />
+                    @endif
+
+                    @if($prenomMotAddon && $nbLettresAddon && !$tailleAddon)
+                        <x-letter-count-sync :prenom-addon-id="$prenomMotAddon->id" :nb-lettres-addon-id="$nbLettresAddon->id" />
                     @endif
                 @endif
 

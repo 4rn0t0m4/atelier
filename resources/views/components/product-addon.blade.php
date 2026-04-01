@@ -60,7 +60,8 @@
                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
                 <option value="">— Choisir —</option>
                 @foreach($addon->options ?? [] as $i => $option)
-                    <option value="{{ $option['label'] ?? $option }}">
+                    <option value="{{ $option['label'] ?? $option }}"
+                            @if(!empty($option['price'])) data-price="{{ $option['price'] }}" data-price-type="{{ $option['price_type'] ?? 'flat_fee' }}" @endif>
                         {{ $option['label'] ?? $option }}
                         @if(!empty($option['price']) && $option['price'] > 0)
                             (+{{ number_format($option['price'], 2, ',', ' ') }} €)
