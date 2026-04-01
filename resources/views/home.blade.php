@@ -27,9 +27,6 @@
 @if($categories->isNotEmpty())
 <section class="py-16 bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="text-2xl font-semibold text-center mb-10 text-brand-700" style="font-family: Georgia, serif;">
-            Nos categories
-        </h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-5">
             @foreach($categories as $cat)
                 <a href="{{ $cat->url() }}"
