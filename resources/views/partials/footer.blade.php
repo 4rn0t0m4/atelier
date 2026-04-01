@@ -37,6 +37,7 @@
                     <li><a href="{{ route('page.show', 'mentions-legales') }}" class="hover:opacity-70 transition-opacity">Mentions legales</a></li>
                     <li><a href="{{ route('page.show', 'politique-de-confidentialite') }}" class="hover:opacity-70 transition-opacity">Confidentialite</a></li>
                     <li><a href="{{ route('page.show', 'cgv') }}" class="hover:opacity-70 transition-opacity">CGV</a></li>
+                    <li><a href="{{ route('contact.show') }}" class="hover:opacity-70 transition-opacity">Contact</a></li>
                 </ul>
             </div>
         </div>

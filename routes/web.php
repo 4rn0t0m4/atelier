@@ -6,6 +6,7 @@ use App\Http\Controllers\BoxtalController;
 use App\Http\Controllers\BoxtalWebhookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegacyRedirectController;
@@ -77,8 +78,8 @@ Route::prefix('/mon-compte')->name('account.')->middleware('auth')->group(functi
 });
 
 // Contact
-// Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-// Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send')->middleware('throttle:5,1');
 
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
