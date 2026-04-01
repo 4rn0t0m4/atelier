@@ -88,7 +88,6 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 Route::get('/produit/{slug}', [LegacyRedirectController::class, 'product']);
 Route::get('/categorie-produit/{slug}', [LegacyRedirectController::class, 'category']);
 Route::redirect('/shop', '/boutique', 301);
-Route::redirect('/mon-compte', '/connexion', 301);
 Route::redirect('/panier-2', '/panier', 301);
 Route::redirect('/commande-2', '/commande', 301);
 

@@ -24,7 +24,7 @@
                 <ul class="space-y-1.5 text-brand-500">
                     <li><a href="{{ route('cart.index') }}" class="hover:opacity-70 transition-opacity">Mon panier</a></li>
                     @auth
-                        <li><a href="{{ url('/mon-compte') }}" class="hover:opacity-70 transition-opacity">Mon compte</a></li>
+                        <li><a href="{{ route('account.index') }}" class="hover:opacity-70 transition-opacity">Mon compte</a></li>
                     @else
                         <li><a href="{{ url('/connexion') }}" class="hover:opacity-70 transition-opacity">Connexion</a></li>
                     @endauth
