@@ -207,17 +207,19 @@
                 <label class="block text-sm text-gray-600 mb-1">Categorie</label>
                 <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                     <option value="">-- Aucune --</option>
-                    @foreach($categories as $cat)
-                        @if($cat->parent_id === null)
-                            <optgroup label="{{ $cat->name }}">
-                                @foreach($cat->children as $child)
-                                    <option value="{{ $child->id }}" {{ old('category_id', $product->category_id ?? '') == $child->id ? 'selected' : '' }}>
-                                        {{ $child->name }}
-                                    </option>
-                                @endforeach
-                            </optgroup>
-                        @endif
-                    @endforeach
+                    @php
+                        $renderOptions = function($items, $depth = 0) use (&$renderOptions, $product) {
+                            foreach ($items as $cat) {
+                                $prefix = str_repeat('— ', $depth);
+                                $selected = old('category_id', $product->category_id ?? '') == $cat->id ? 'selected' : '';
+                                echo "<option value=\"{$cat->id}\" {$selected}>{$prefix}{$cat->name}</option>";
+                                if ($cat->children->isNotEmpty()) {
+                                    $renderOptions($cat->children->sortBy('sort_order'), $depth + 1);
+                                }
+                            }
+                        };
+                        $renderOptions($categories->whereNull('parent_id'));
+                    @endphp
                 </select>
             </div>
 

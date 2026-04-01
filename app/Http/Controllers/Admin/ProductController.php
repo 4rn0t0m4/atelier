@@ -35,14 +35,14 @@ class ProductController extends Controller
         $query->orderBy($sort, $dir);
 
         $products = $query->paginate(20)->withQueryString();
-        $categories = ProductCategory::orderBy('name')->get();
+        $categories = ProductCategory::with('children.children.children')->orderBy('sort_order')->orderBy('name')->get();
 
         return view('admin.products.index', compact('products', 'categories'));
     }
 
     public function create()
     {
-        $categories = ProductCategory::orderBy('name')->get();
+        $categories = ProductCategory::with('children.children.children')->orderBy('sort_order')->orderBy('name')->get();
         $addonGroups = ProductAddonGroup::with('addons')->orderBy('sort_order')->get();
 
         return view('admin.products.create', compact('categories', 'addonGroups'));
@@ -93,7 +93,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load(['addonGroups', 'featuredImage']);
-        $categories = ProductCategory::orderBy('name')->get();
+        $categories = ProductCategory::with('children.children.children')->orderBy('sort_order')->orderBy('name')->get();
         $addonGroups = ProductAddonGroup::with('addons')->orderBy('sort_order')->get();
 
         return view('admin.products.edit', compact('product', 'categories', 'addonGroups'));
