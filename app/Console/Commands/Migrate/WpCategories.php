@@ -22,42 +22,58 @@ class WpCategories extends WpImportCommand
             ->orderBy('t.name')
             ->get();
 
+        $this->info("  {$categories->count()} catégories trouvées dans WordPress");
+
         $mediaMap = $this->loadMap('wp_media_map.json');
         $map = [];
         $created = 0;
+        $errors = 0;
 
         // Pass 1 : créer toutes les catégories sans parent
         foreach ($categories as $cat) {
-            $thumbnailId = $this->wp()
-                ->table('termmeta')
-                ->where('term_id', $cat->term_id)
-                ->where('meta_key', 'thumbnail_id')
-                ->value('meta_value');
+            try {
+                $thumbnailId = $this->wp()
+                    ->table('termmeta')
+                    ->where('term_id', $cat->term_id)
+                    ->where('meta_key', 'thumbnail_id')
+                    ->value('meta_value');
 
-            $yoastTitle = $this->wp()
-                ->table('termmeta')
-                ->where('term_id', $cat->term_id)
-                ->where('meta_key', 'wpseo_title')
-                ->value('meta_value');
+                $yoastTitle = $this->wp()
+                    ->table('termmeta')
+                    ->where('term_id', $cat->term_id)
+                    ->where('meta_key', 'wpseo_title')
+                    ->value('meta_value');
 
-            $yoastDesc = $this->wp()
-                ->table('termmeta')
-                ->where('term_id', $cat->term_id)
-                ->where('meta_key', 'wpseo_desc')
-                ->value('meta_value');
+                $yoastDesc = $this->wp()
+                    ->table('termmeta')
+                    ->where('term_id', $cat->term_id)
+                    ->where('meta_key', 'wpseo_desc')
+                    ->value('meta_value');
 
-            $category = ProductCategory::create([
-                'name' => $cat->name,
-                'slug' => $cat->slug,
-                'description' => $cat->description ?? '',
-                'featured_image_id' => $mediaMap[(int) $thumbnailId] ?? null,
-                'sort_order' => $created,
-                'meta_title' => $yoastTitle ?: null,
-                'meta_description' => $yoastDesc ?: null,
-            ]);
+                // Slug unique : suffixer si doublon
+                $slug = $cat->slug;
+                $i = 1;
+                while (ProductCategory::where('slug', $slug)->exists()) {
+                    $slug = $cat->slug . '-' . (++$i);
+                    $this->warn("  Slug doublon pour « {$cat->name} », renommé en {$slug}");
+                }
 
-            $map[$cat->term_id] = $category->id;
-            $created++;
+                $category = ProductCategory::create([
+                    'name' => $cat->name,
+                    'slug' => $slug,
+                    'description' => $cat->description ?? '',
+                    'featured_image_id' => $mediaMap[(int) $thumbnailId] ?? null,
+                    'sort_order' => $created,
+                    'meta_title' => $yoastTitle ?: null,
+                    'meta_description' => $yoastDesc ?: null,
+                ]);
+
+                $map[$cat->term_id] = $category->id;
+                $created++;
+            } catch (\Throwable $e) {
+                $errors++;
+                $this->error("  Erreur sur « {$cat->name} » (term_id={$cat->term_id}) : {$e->getMessage()}");
+            }
         }
 
         // Pass 2 : lier les parents
@@ -73,6 +89,9 @@ class WpCategories extends WpImportCommand
         $this->saveMap('wp_category_map.json', $map);
         $this->printResult('Catégories', $created);
         $this->info("  Relations parent-enfant : {$linked} liées");
+        if ($errors) {
+            $this->error("  {$errors} erreur(s) rencontrée(s)");
+        }
 
         return self::SUCCESS;
     }
