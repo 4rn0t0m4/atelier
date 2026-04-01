@@ -26,7 +26,7 @@
 
 {{-- Produits vedettes --}}
 @if($featuredProducts->isNotEmpty())
-<section class="py-16 bg-brand-50">
+<section class="py-16 bg-white">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between mb-8">
             <h2 class="text-2xl font-semibold text-brand-700" style="font-family: Georgia, serif;">
