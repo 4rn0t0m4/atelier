@@ -41,18 +41,6 @@
         </div>
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">Téléphone</label>
-            <input type="tel" name="phone" value="{{ old('phone') }}"
-                   class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-        </div>
-
-        <div>
-            <label class="block text-sm text-gray-700 mb-1">Sujet</label>
-            <input type="text" name="subject" value="{{ old('subject') }}"
-                   class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-        </div>
-
-        <div>
             <label class="block text-sm text-gray-700 mb-1">Message <span class="text-red-400">*</span></label>
             <textarea name="message" rows="6"
                       class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
