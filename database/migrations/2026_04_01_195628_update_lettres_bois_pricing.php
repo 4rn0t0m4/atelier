@@ -43,6 +43,20 @@ return new class extends Migration
             $taille->save();
         }
 
+        // Options d'accroche → flat_fee (prix fixe par commande, pas par lettre)
+        $accrocheIds = [19, 25, 42, 249, 432];
+        foreach ($accrocheIds as $accrocheId) {
+            $accroche = ProductAddon::find($accrocheId);
+            if (! $accroche || ! $accroche->options) continue;
+
+            $options = $accroche->options;
+            foreach ($options as &$opt) {
+                if (is_array($opt)) $opt['price_type'] = 'flat_fee';
+            }
+            $accroche->options = $options;
+            $accroche->save();
+        }
+
         // Prix de base → 0€ pour les catégories lettres en bois
         $categories = ['Lettres en bois', 'Lettre en bois relief'];
         foreach ($categories as $catName) {

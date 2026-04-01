@@ -4,7 +4,7 @@
 <div class="pt-3 border-t border-gray-200 mt-3">
     <p class="text-sm font-semibold text-gray-800 uppercase tracking-wide">{{ $addon->label }}</p>
     @if($addon->description)
-        <p class="text-xs text-gray-400">{{ $addon->description }}</p>
+        <p class="text-xs text-gray-400">{!! $addon->description !!}</p>
     @endif
 </div>
 @else
@@ -21,7 +21,7 @@
     </label>
 
     @if($addon->description)
-        <p class="text-xs text-gray-400">{{ $addon->description }}</p>
+        <p class="text-xs text-gray-400">{!! $addon->description !!}</p>
     @endif
 
     @switch($addon->type)
