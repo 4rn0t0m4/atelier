@@ -107,10 +107,11 @@ class ShopController extends Controller
         // Groupes d'addons
         $addonGroups = $product->getAllAddonGroups();
 
-        // Galerie
+        // Galerie (ordre défini dans l'admin)
         $galleryImages = collect();
         if ($product->gallery_image_ids) {
-            $galleryImages = \App\Models\Media::whereIn('id', $product->gallery_image_ids)->get();
+            $ids = $product->gallery_image_ids;
+            $galleryImages = \App\Models\Media::whereIn('id', $ids)->get()->sortBy(fn ($m) => array_search($m->id, $ids))->values();
         }
 
         // Produits similaires
