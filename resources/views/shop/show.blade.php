@@ -23,7 +23,13 @@ $productSchema = [
         '@type' => 'Offer',
         'url' => url()->current(),
         'priceCurrency' => 'EUR',
-        'price' => number_format($product->effective_price, 2, '.', ''),
+        'price' => number_format(
+            $product->effective_price > 0
+                ? $product->effective_price
+                : ($product->category && in_array($product->category->slug, ['lettres-en-bois', 'lettre-en-bois-3d'])
+                    ? ($product->getAllAddonGroups()->flatMap->addons->where('label', 'Taille des lettres')->flatMap(fn($a) => collect($a->options)->pluck('price'))->filter()->min() ?: 0)
+                    : 0),
+            2, '.', ''),
         'availability' => !$product->isInStock()
             ? 'https://schema.org/OutOfStock'
             : 'https://schema.org/InStock',
