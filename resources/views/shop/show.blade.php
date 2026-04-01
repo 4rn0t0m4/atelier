@@ -135,10 +135,10 @@ $breadcrumbJsonLd = json_encode([
 
             {{-- Miniatures --}}
             @if($allImages->count() > 1)
-                <div class="flex flex-wrap gap-2">
+                <div class="flex gap-2 overflow-x-auto pb-2 lg:flex-wrap lg:overflow-visible lg:pb-0 scrollbar-hide">
                     @foreach($allImages as $i => $img)
                         <button @click="active = {{ $i }}"
-                                class="w-28 h-28 rounded-lg overflow-hidden border-2 transition"
+                                class="w-16 h-16 lg:w-20 lg:h-20 rounded-lg overflow-hidden border-2 transition shrink-0"
                                 :class="active === {{ $i }} ? 'border-brand-600' : 'border-transparent hover:border-brand-300'">
                             <img src="{{ $img->url }}" alt="{{ $img->alt ?: $product->name }}"
                                  loading="lazy" class="w-full h-full object-cover">
