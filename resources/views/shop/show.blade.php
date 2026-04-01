@@ -245,7 +245,7 @@ $breadcrumbJsonLd = json_encode([
             @endif
 
             {{-- Formulaire ajout panier --}}
-            <form action="{{ route('cart.add') }}" method="POST" class="space-y-4" data-turbo="false">
+            <form action="{{ route('cart.add') }}" method="POST" class="space-y-4">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
