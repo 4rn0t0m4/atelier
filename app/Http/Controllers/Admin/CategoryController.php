@@ -17,16 +17,17 @@ class CategoryController extends Controller
             ->orderBy('name')
             ->get();
 
-        // Grouper : parents d'abord, puis enfants sous chaque parent
-        $roots = $categories->whereNull('parent_id');
+        // Grouper : parents d'abord, puis enfants récursivement
         $grouped = collect();
-        foreach ($roots as $root) {
-            $grouped->push($root);
-            $children = $categories->where('parent_id', $root->id)->sortBy('sort_order');
-            foreach ($children as $child) {
-                $grouped->push($child);
+        $addChildren = function ($parentId, $depth = 0) use (&$addChildren, $categories, $grouped) {
+            $items = $categories->where('parent_id', $parentId ?: null)->sortBy('sort_order');
+            foreach ($items as $item) {
+                $item->depth = $depth;
+                $grouped->push($item);
+                $addChildren($item->id, $depth + 1);
             }
-        }
+        };
+        $addChildren(null);
 
         return view('admin.categories.index', ['categories' => $grouped]);
     }

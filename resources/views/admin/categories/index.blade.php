@@ -29,8 +29,8 @@
                 @forelse($categories as $category)
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-3">
-                        @if($category->parent_id)
-                            <span class="text-gray-400 mr-1">└─</span>
+                        @if($category->depth ?? 0)
+                            <span class="text-gray-400 mr-1">{!! str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', ($category->depth ?? 1) - 1) !!}└─</span>
                         @endif
                         <a href="{{ route('admin.categories.edit', $category) }}" class="font-medium text-gray-900 hover:text-brand-700">
                             {{ $category->name }}
