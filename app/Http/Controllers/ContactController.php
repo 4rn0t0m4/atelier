@@ -16,6 +16,11 @@ class ContactController extends Controller
 
     public function send(Request $request)
     {
+        // Honeypot anti-spam
+        if ($request->filled('website')) {
+            return back()->with('status', 'Votre message a bien été envoyé. Nous vous répondrons dans les meilleurs délais.');
+        }
+
         $data = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:255',

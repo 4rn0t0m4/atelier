@@ -40,6 +40,12 @@
                    required>
         </div>
 
+        {{-- Honeypot anti-spam --}}
+        <div aria-hidden="true" style="position:absolute;left:-9999px;">
+            <label for="website">Ne pas remplir</label>
+            <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+        </div>
+
         <div>
             <label for="message" class="block text-sm text-gray-700 mb-1">Message <span class="text-red-400">*</span></label>
             <textarea name="message" id="message" rows="6"
