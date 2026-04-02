@@ -20,7 +20,13 @@ class BoxtalWebhookController extends Controller
         $secret = config('shipping.boxtal.v3_webhook_secret')
             ?: Setting::where('key', 'boxtal_v3_webhook_secret')->value('value');
 
-        if ($secret && ! $this->verifySignature($request, $secret)) {
+        if (! $secret) {
+            Log::error('BoxtalWebhook: aucun secret configuré, webhook rejeté');
+
+            return response()->json(['message' => 'Webhook secret not configured'], 500);
+        }
+
+        if (! $this->verifySignature($request, $secret)) {
             Log::warning('BoxtalWebhook: signature invalide');
 
             return response()->json(['message' => 'Invalid signature'], 401);

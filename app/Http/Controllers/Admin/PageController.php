@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Mews\Purifier\Facades\Purifier;
 
 class PageController extends Controller
 {
@@ -25,6 +26,7 @@ class PageController extends Controller
     {
         $validated = $this->validatePage($request);
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['title']);
+        $validated['content'] = isset($validated['content']) ? Purifier::clean($validated['content']) : null;
 
         Page::create($validated);
 
@@ -40,6 +42,7 @@ class PageController extends Controller
     {
         $validated = $this->validatePage($request, $page);
         $validated['slug'] = $validated['slug'] ?: Str::slug($validated['title']);
+        $validated['content'] = isset($validated['content']) ? Purifier::clean($validated['content']) : null;
 
         $page->update($validated);
 

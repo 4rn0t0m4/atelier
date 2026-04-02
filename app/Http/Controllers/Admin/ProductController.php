@@ -10,6 +10,7 @@ use App\Models\ProductAddonGroup;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Mews\Purifier\Facades\Purifier;
 
 class ProductController extends Controller
 {
@@ -81,6 +82,8 @@ class ProductController extends Controller
         $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
         $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 
+        $validated['short_description'] = isset($validated['short_description']) ? Purifier::clean($validated['short_description']) : null;
+        $validated['description'] = isset($validated['description']) ? Purifier::clean($validated['description']) : null;
         $validated['excluded_global_group_ids'] = $this->computeExcludedGlobalIds($request);
 
         $product = Product::create($validated);
@@ -132,6 +135,8 @@ class ProductController extends Controller
         $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
         $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 
+        $validated['short_description'] = isset($validated['short_description']) ? Purifier::clean($validated['short_description']) : null;
+        $validated['description'] = isset($validated['description']) ? Purifier::clean($validated['description']) : null;
         $validated['excluded_global_group_ids'] = $this->computeExcludedGlobalIds($request);
 
         $product->update($validated);

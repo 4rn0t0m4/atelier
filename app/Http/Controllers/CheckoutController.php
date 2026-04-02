@@ -249,6 +249,9 @@ class CheckoutController extends Controller
             return redirect()->route('shop.index');
         }
 
+        // Vérifier que l'utilisateur est le propriétaire de la commande
+        abort_if(auth()->check() && $order->user_id && $order->user_id !== auth()->id(), 403);
+
         $paymentConfirmed = in_array($order->status, ['processing', 'completed']);
 
         // Vérification Stripe uniquement si pas encore confirmé

@@ -129,7 +129,7 @@ class AddonGroupController extends Controller
                 'required' => ! empty($addonData['required']),
                 'min' => $addonData['min'] ?? null,
                 'max' => $addonData['max'] ?? null,
-                'description' => $addonData['description'] ?? null,
+                'description' => isset($addonData['description']) ? strip_tags($addonData['description'], '<br><em><strong><b><i><u><span><a><p>') : null,
                 'placeholder' => $addonData['placeholder'] ?? null,
                 'options' => $options,
                 'sort_order' => $index,

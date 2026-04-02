@@ -28,6 +28,7 @@ class PayPalController extends Controller
         $request->validate(['order_id' => 'required|integer']);
 
         $order = Order::where('id', $request->order_id)
+            ->where('user_id', auth()->id())
             ->where('payment_method', 'paypal')
             ->where('status', 'pending')
             ->firstOrFail();
@@ -54,6 +55,7 @@ class PayPalController extends Controller
         ]);
 
         $order = Order::where('id', $request->order_id)
+            ->where('user_id', auth()->id())
             ->where('payment_method', 'paypal')
             ->where('status', 'pending')
             ->firstOrFail();
