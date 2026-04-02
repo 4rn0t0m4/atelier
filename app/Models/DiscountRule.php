@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DiscountRule extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'name', 'coupon_code', 'is_active', 'type', 'discount_type', 'discount_amount',
         'target_categories', 'target_products',

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductAddonGroup extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'name', 'description', 'is_global', 'restrict_to_categories', 'sort_order',
     ];
