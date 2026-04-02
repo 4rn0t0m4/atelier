@@ -37,7 +37,7 @@ class CheckoutStoreRequest extends FormRequest
             'shipping_country' => 'nullable|string|in:'.$countryKeys,
             'customer_note' => 'nullable|string|max:1000',
             'shipping_method' => 'required|in:'.$shippingKeys,
-            'relay_point_code' => 'nullable|required_if:shipping_method,boxtal,boxtal_intl|string|max:100',
+            'relay_point_code' => ['nullable', 'required_if:shipping_method,boxtal', 'required_if:shipping_method,boxtal_intl', 'string', 'max:100'],
             'relay_point_name' => 'nullable|string|max:255',
             'relay_point_address' => 'nullable|string|max:500',
             'relay_network' => 'nullable|string|max:50',

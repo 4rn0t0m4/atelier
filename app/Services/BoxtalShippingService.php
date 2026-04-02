@@ -259,23 +259,29 @@ class BoxtalShippingService
 
         $messages = [];
         foreach ($body['errors'] as $error) {
-            $msg = $error['code'] ?? $error['message'] ?? 'Unknown';
-            if (isset($error['parameters']) && is_array($error['parameters'])) {
-                $params = [];
-                foreach ($error['parameters'] as $param) {
-                    $field = $param['field'] ?? $param['name'] ?? null;
-                    $code = $param['code'] ?? $param['message'] ?? $param['value'] ?? null;
-                    if ($field || $code) {
-                        $params[] = ($field ?: '?') . ': ' . ($code ?: '?');
+            $params = $error['parameters'] ?? [];
+
+            // Boxtal renvoie parameters comme objet {field, code, value} ou comme tableau d'objets
+            if (isset($params['field'])) {
+                // Objet unique
+                $field = $params['field'] ?? '';
+                $value = $params['value'] ?? $params['code'] ?? '';
+                $msg = ($error['code'] ?? 'Erreur') . " — {$field}: {$value}";
+            } elseif (is_array($params) && ! empty($params)) {
+                // Tableau d'objets
+                $details = [];
+                foreach ($params as $param) {
+                    if (is_array($param)) {
+                        $field = $param['field'] ?? $param['name'] ?? '?';
+                        $value = $param['value'] ?? $param['code'] ?? $param['message'] ?? '?';
+                        $details[] = "{$field}: {$value}";
                     }
                 }
-                if ($params) {
-                    $msg .= ' — ' . implode(', ', $params);
-                }
+                $msg = ($error['code'] ?? 'Erreur') . ($details ? ' — ' . implode(', ', $details) : '');
+            } else {
+                $msg = $error['code'] ?? $error['message'] ?? 'Erreur inconnue';
             }
-            if (isset($error['message']) && ($error['message'] !== ($error['code'] ?? null))) {
-                $msg .= ' (' . $error['message'] . ')';
-            }
+
             $messages[] = $msg;
         }
 
