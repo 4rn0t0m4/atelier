@@ -18,6 +18,8 @@ class ProductAddon extends Model
         'adjust_price' => 'boolean',
         'required' => 'boolean',
         'sync_qty' => 'boolean',
+        'min' => 'integer',
+        'max' => 'integer',
         'options' => 'array',
     ];
 

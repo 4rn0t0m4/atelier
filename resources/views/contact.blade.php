@@ -27,22 +27,22 @@
         @csrf
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">Nom <span class="text-red-400">*</span></label>
-            <input type="text" name="name" value="{{ old('name') }}"
+            <label for="name" class="block text-sm text-gray-700 mb-1">Nom <span class="text-red-400">*</span></label>
+            <input type="text" name="name" id="name" value="{{ old('name') }}"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required>
         </div>
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">E-mail <span class="text-red-400">*</span></label>
-            <input type="email" name="email" value="{{ old('email') }}"
+            <label for="email" class="block text-sm text-gray-700 mb-1">E-mail <span class="text-red-400">*</span></label>
+            <input type="email" name="email" id="email" value="{{ old('email') }}"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required>
         </div>
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">Message <span class="text-red-400">*</span></label>
-            <textarea name="message" rows="6"
+            <label for="message" class="block text-sm text-gray-700 mb-1">Message <span class="text-red-400">*</span></label>
+            <textarea name="message" id="message" rows="6"
                       class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                       required>{{ old('message') }}</textarea>
         </div>

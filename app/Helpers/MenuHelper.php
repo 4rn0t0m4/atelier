@@ -88,7 +88,7 @@ class MenuHelper
 
     private static function category(string $slug, ?string $name = null): array
     {
-        $cat = ProductCategory::where('slug', $slug)->first();
+        $cat = ProductCategory::with('parent')->where('slug', $slug)->first();
 
         return [
             'name' => $name ?? $cat?->name ?? ucfirst($slug),
@@ -98,7 +98,7 @@ class MenuHelper
 
     private static function categoryUrl(string $slug): string
     {
-        $cat = ProductCategory::where('slug', $slug)->first();
+        $cat = ProductCategory::with('parent')->where('slug', $slug)->first();
 
         return $cat?->url() ?? '/boutique';
     }

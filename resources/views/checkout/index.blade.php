@@ -138,68 +138,68 @@
                     </h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Prénom *</label>
-                            <input type="text" name="billing_first_name"
+                            <label for="billing_first_name" class="block text-sm text-gray-700 mb-1">Prénom *</label>
+                            <input type="text" name="billing_first_name" id="billing_first_name"
                                    value="{{ old('billing_first_name', $prefill['billing_first_name'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_first_name') border-red-400 @enderror"
                                    required>
                             @error('billing_first_name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Nom *</label>
-                            <input type="text" name="billing_last_name"
+                            <label for="billing_last_name" class="block text-sm text-gray-700 mb-1">Nom *</label>
+                            <input type="text" name="billing_last_name" id="billing_last_name"
                                    value="{{ old('billing_last_name', $prefill['billing_last_name'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_last_name') border-red-400 @enderror"
                                    required>
                             @error('billing_last_name')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">E-mail *</label>
-                            <input type="email" name="billing_email"
+                            <label for="billing_email" class="block text-sm text-gray-700 mb-1">E-mail *</label>
+                            <input type="email" name="billing_email" id="billing_email"
                                    value="{{ old('billing_email', $prefill['billing_email'] ?? auth()->user()?->email) }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_email') border-red-400 @enderror"
                                    required>
                             @error('billing_email')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Téléphone</label>
-                            <input type="tel" name="billing_phone"
+                            <label for="billing_phone" class="block text-sm text-gray-700 mb-1">Téléphone</label>
+                            <input type="tel" name="billing_phone" id="billing_phone"
                                    value="{{ old('billing_phone', $prefill['billing_phone'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm text-gray-700 mb-1">Adresse *</label>
-                            <input type="text" name="billing_address_1"
+                            <label for="billing_address_1" class="block text-sm text-gray-700 mb-1">Adresse *</label>
+                            <input type="text" name="billing_address_1" id="billing_address_1"
                                    value="{{ old('billing_address_1', $prefill['billing_address_1'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_address_1') border-red-400 @enderror"
                                    required>
                             @error('billing_address_1')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm text-gray-700 mb-1">Complément d'adresse</label>
-                            <input type="text" name="billing_address_2"
+                            <label for="billing_address_2" class="block text-sm text-gray-700 mb-1">Complément d'adresse</label>
+                            <input type="text" name="billing_address_2" id="billing_address_2"
                                    value="{{ old('billing_address_2', $prefill['billing_address_2'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Code postal *</label>
-                            <input type="text" name="billing_postcode"
+                            <label for="billing_postcode" class="block text-sm text-gray-700 mb-1">Code postal *</label>
+                            <input type="text" name="billing_postcode" id="billing_postcode"
                                    value="{{ old('billing_postcode', $prefill['billing_postcode'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_postcode') border-red-400 @enderror"
                                    required>
                             @error('billing_postcode')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Ville *</label>
-                            <input type="text" name="billing_city"
+                            <label for="billing_city" class="block text-sm text-gray-700 mb-1">Ville *</label>
+                            <input type="text" name="billing_city" id="billing_city"
                                    value="{{ old('billing_city', $prefill['billing_city'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('billing_city') border-red-400 @enderror"
                                    required>
                             @error('billing_city')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Pays *</label>
-                            <select name="billing_country"
+                            <label for="billing_country" class="block text-sm text-gray-700 mb-1">Pays *</label>
+                            <select name="billing_country" id="billing_country"
                                     x-model="billingCountry"
                                     @change="if (shippingSame) onCountryChange()"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
@@ -226,15 +226,15 @@
                     </label>
                     <div x-show="createAccount" x-cloak class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Mot de passe *</label>
-                            <input type="password" name="password"
+                            <label for="password" class="block text-sm text-gray-700 mb-1">Mot de passe *</label>
+                            <input type="password" name="password" id="password"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500 @error('password') border-red-400 @enderror"
                                    minlength="8">
                             @error('password')<p class="text-xs text-red-500 mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Confirmer le mot de passe *</label>
-                            <input type="password" name="password_confirmation"
+                            <label for="password_confirmation" class="block text-sm text-gray-700 mb-1">Confirmer le mot de passe *</label>
+                            <input type="password" name="password_confirmation" id="password_confirmation"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                                    minlength="8">
                         </div>
@@ -260,44 +260,44 @@
 
                     <div x-show="!shippingSame && !isRelayMethod" x-transition class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Prénom</label>
-                            <input type="text" name="shipping_first_name"
+                            <label for="shipping_first_name" class="block text-sm text-gray-700 mb-1">Prénom</label>
+                            <input type="text" name="shipping_first_name" id="shipping_first_name"
                                    value="{{ old('shipping_first_name', $prefill['shipping_first_name'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Nom</label>
-                            <input type="text" name="shipping_last_name"
+                            <label for="shipping_last_name" class="block text-sm text-gray-700 mb-1">Nom</label>
+                            <input type="text" name="shipping_last_name" id="shipping_last_name"
                                    value="{{ old('shipping_last_name', $prefill['shipping_last_name'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm text-gray-700 mb-1">Adresse</label>
-                            <input type="text" name="shipping_address_1"
+                            <label for="shipping_address_1" class="block text-sm text-gray-700 mb-1">Adresse</label>
+                            <input type="text" name="shipping_address_1" id="shipping_address_1"
                                    value="{{ old('shipping_address_1', $prefill['shipping_address_1'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm text-gray-700 mb-1">Complément</label>
-                            <input type="text" name="shipping_address_2"
+                            <label for="shipping_address_2" class="block text-sm text-gray-700 mb-1">Complément</label>
+                            <input type="text" name="shipping_address_2" id="shipping_address_2"
                                    value="{{ old('shipping_address_2', $prefill['shipping_address_2'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Code postal</label>
-                            <input type="text" name="shipping_postcode"
+                            <label for="shipping_postcode" class="block text-sm text-gray-700 mb-1">Code postal</label>
+                            <input type="text" name="shipping_postcode" id="shipping_postcode"
                                    value="{{ old('shipping_postcode', $prefill['shipping_postcode'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Ville</label>
-                            <input type="text" name="shipping_city"
+                            <label for="shipping_city" class="block text-sm text-gray-700 mb-1">Ville</label>
+                            <input type="text" name="shipping_city" id="shipping_city"
                                    value="{{ old('shipping_city', $prefill['shipping_city'] ?? '') }}"
                                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         </div>
                         <div>
-                            <label class="block text-sm text-gray-700 mb-1">Pays</label>
-                            <select name="shipping_country"
+                            <label for="shipping_country" class="block text-sm text-gray-700 mb-1">Pays</label>
+                            <select name="shipping_country" id="shipping_country"
                                     x-model="shippingCountryField"
                                     @change="onCountryChange()"
                                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
@@ -361,10 +361,10 @@
                     @error('relay_point_code')<p class="text-xs text-red-500 mb-3">{{ $message }}</p>@enderror
 
                     <div class="mb-4 flex gap-3">
-                        <input type="text" x-ref="relayZip" placeholder="Code postal"
+                        <input type="text" x-ref="relayZip" placeholder="Code postal" aria-label="Code postal point relais"
                                :value="$el.value || document.querySelector('[name=billing_postcode]')?.value || ''"
                                class="w-32 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                        <input type="text" x-ref="relayCity" placeholder="Ville"
+                        <input type="text" x-ref="relayCity" placeholder="Ville" aria-label="Ville point relais"
                                :value="$el.value || document.querySelector('[name=billing_city]')?.value || ''"
                                class="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         <button type="button"

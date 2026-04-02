@@ -23,8 +23,8 @@
         @csrf
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">E-mail</label>
-            <input type="email" name="email" value="{{ old('email') }}"
+            <label for="email" class="block text-sm text-gray-700 mb-1">E-mail</label>
+            <input type="email" name="email" id="email" value="{{ old('email') }}"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required autofocus>
         </div>

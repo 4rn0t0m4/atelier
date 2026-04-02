@@ -16,22 +16,22 @@
         <input type="hidden" name="token" value="{{ $token }}">
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">E-mail</label>
-            <input type="email" name="email" value="{{ old('email', $email) }}"
+            <label for="email" class="block text-sm text-gray-700 mb-1">E-mail</label>
+            <input type="email" name="email" id="email" value="{{ old('email', $email) }}"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required>
         </div>
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">Nouveau mot de passe</label>
-            <input type="password" name="password"
+            <label for="password" class="block text-sm text-gray-700 mb-1">Nouveau mot de passe</label>
+            <input type="password" name="password" id="password"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required autofocus>
         </div>
 
         <div>
-            <label class="block text-sm text-gray-700 mb-1">Confirmer le mot de passe</label>
-            <input type="password" name="password_confirmation"
+            <label for="password_confirmation" class="block text-sm text-gray-700 mb-1">Confirmer le mot de passe</label>
+            <input type="password" name="password_confirmation" id="password_confirmation"
                    class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
                    required>
         </div>

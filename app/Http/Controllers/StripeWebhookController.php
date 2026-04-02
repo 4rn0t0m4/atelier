@@ -6,7 +6,7 @@ use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Mail\PaymentFailed;
 use App\Models\Order;
-use App\Models\Product;
+use App\Services\OrderFulfillmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -59,17 +59,12 @@ class StripeWebhookController extends Controller
                 return null;
             }
 
-            $order->update([
-                'status' => 'processing',
-                'paid_at' => now(),
-            ]);
+            $fulfillment = app(OrderFulfillmentService::class);
+            $fulfillment->confirmPayment($order);
 
             Log::info("Commande #{$order->number} payée via Stripe.");
 
-            $order->load('items');
-            $this->decrementStock($order);
-
-            return $order;
+            return $order->fresh();
         });
 
         if ($order) {
@@ -80,33 +75,6 @@ class StripeWebhookController extends Controller
                 Mail::to(config('mail.admin_address'))->send(new NewOrderAdmin($order));
             } catch (\Exception $e) {
                 Log::error("Erreur envoi email commande #{$order->number}", ['error' => $e->getMessage()]);
-            }
-        }
-    }
-
-    private function decrementStock(Order $order): void
-    {
-        foreach ($order->items as $item) {
-            $product = Product::where('id', $item->product_id)
-                ->where('manage_stock', true)
-                ->lockForUpdate()
-                ->first();
-
-            if (! $product || $product->stock_quantity < $item->quantity) {
-                Log::warning("Stock insuffisant pour produit #{$item->product_id}", [
-                    'order' => $order->id,
-                    'requested' => $item->quantity,
-                    'available' => $product?->stock_quantity,
-                ]);
-
-                continue;
-            }
-
-            $product->decrement('stock_quantity', $item->quantity);
-            $product->increment('total_sales', $item->quantity);
-
-            if ($product->fresh()->stock_quantity <= 0) {
-                $product->update(['stock_status' => 'outofstock']);
             }
         }
     }

@@ -27,7 +27,7 @@ class AccountController extends Controller
     public function orders()
     {
         $orders = Order::where('user_id', auth()->id())
-            ->with('items')
+            ->with('items.product')
             ->orderByDesc('created_at')
             ->paginate(10);
 

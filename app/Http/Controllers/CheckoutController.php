@@ -6,10 +6,10 @@ use App\Http\Requests\CheckoutStoreRequest;
 use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Models\Order;
-use App\Models\Product;
 use App\Models\Setting;
 use App\Services\CartService;
 use App\Services\DiscountEngine;
+use App\Services\OrderFulfillmentService;
 use App\Services\OrderService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -286,36 +286,11 @@ class CheckoutController extends Controller
     private function confirmOrderFromSuccess(Order $order): void
     {
         DB::transaction(function () use ($order) {
-            $locked = Order::where('id', $order->id)
-                ->where('status', 'pending')
-                ->lockForUpdate()
-                ->first();
+            $fulfillment = app(OrderFulfillmentService::class);
+            $confirmed = $fulfillment->confirmPayment($order);
 
-            if (! $locked) {
-                return;
-            }
-
-            $locked->update([
-                'status' => 'processing',
-                'paid_at' => now(),
-            ]);
-
-            Log::info("Commande #{$locked->number} confirmée via page success.");
-
-            $locked->load('items');
-            foreach ($locked->items as $item) {
-                $product = Product::where('id', $item->product_id)
-                    ->where('manage_stock', true)
-                    ->lockForUpdate()
-                    ->first();
-
-                if ($product && $product->stock_quantity >= $item->quantity) {
-                    $product->decrement('stock_quantity', $item->quantity);
-                    $product->increment('total_sales', $item->quantity);
-                    if ($product->fresh()->stock_quantity <= 0) {
-                        $product->update(['stock_status' => 'outofstock']);
-                    }
-                }
+            if ($confirmed) {
+                Log::info("Commande #{$order->number} confirmée via page success.");
             }
         });
     }

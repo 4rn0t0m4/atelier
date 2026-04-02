@@ -65,7 +65,7 @@
             @endif
 
             <div style="text-align: center;">
-                <a href="{{ url('/admin/commandes/' . $order->id) }}" class="btn" style="color: #ffffff;">Voir la commande</a>
+                <a href="{{ route('admin.orders.show', $order) }}" class="btn" style="color: #ffffff;">Voir la commande</a>
             </div>
         </div>
     </div>

@@ -158,12 +158,25 @@
                     <button type="button" x-show="selected" x-cloak
                             @click="if(selected) {
                                 let opt = $refs.groupSelect.querySelector('option:checked');
-                                let label = opt.textContent.trim();
+                                let labelText = opt.textContent.trim();
                                 let el = document.createElement('div');
                                 el.className = 'flex items-center justify-between p-3 rounded-lg border border-brand-100 bg-brand-50/30';
                                 el.setAttribute('data-addon-group', '');
-                                el.innerHTML = '<input type=hidden name=addon_groups[] value=' + selected + '><div class=text-sm font-medium text-gray-700>' + label + '</div><button type=button class=text-red-400 hover:text-red-600 text-xs ml-2>Retirer</button>';
-                                el.querySelector('button').addEventListener('click', function() { el.remove(); });
+                                let input = document.createElement('input');
+                                input.type = 'hidden';
+                                input.name = 'addon_groups[]';
+                                input.value = selected;
+                                let labelDiv = document.createElement('div');
+                                labelDiv.className = 'text-sm font-medium text-gray-700';
+                                labelDiv.textContent = labelText;
+                                let removeBtn = document.createElement('button');
+                                removeBtn.type = 'button';
+                                removeBtn.className = 'text-red-400 hover:text-red-600 text-xs ml-2';
+                                removeBtn.textContent = 'Retirer';
+                                removeBtn.addEventListener('click', function() { el.remove(); });
+                                el.appendChild(input);
+                                el.appendChild(labelDiv);
+                                el.appendChild(removeBtn);
                                 $refs.list.appendChild(el);
                                 opt.remove();
                                 selected = '';

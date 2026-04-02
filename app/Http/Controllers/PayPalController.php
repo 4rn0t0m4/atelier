@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Models\Order;
-use App\Models\Product;
 use App\Services\CartService;
+use App\Services\OrderFulfillmentService;
 use App\Services\PayPalService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,47 +68,12 @@ class PayPalController extends Controller
 
         // Confirmer la commande
         DB::transaction(function () use ($order, $request) {
-            $locked = Order::where('id', $order->id)
-                ->where('status', 'pending')
-                ->lockForUpdate()
-                ->first();
+            $order->update(['paypal_order_id' => $request->paypal_order_id]);
 
-            if (! $locked) {
-                return;
-            }
+            $fulfillment = app(OrderFulfillmentService::class);
+            $fulfillment->confirmPayment($order);
 
-            $locked->update([
-                'status' => 'processing',
-                'paid_at' => now(),
-                'paypal_order_id' => $request->paypal_order_id,
-            ]);
-
-            Log::info("Commande #{$locked->number} payée via PayPal.");
-
-            $locked->load('items');
-            foreach ($locked->items as $item) {
-                $product = Product::where('id', $item->product_id)
-                    ->where('manage_stock', true)
-                    ->lockForUpdate()
-                    ->first();
-
-                if (! $product || $product->stock_quantity < $item->quantity) {
-                    Log::warning("Stock insuffisant pour produit #{$item->product_id}", [
-                        'order' => $locked->id,
-                        'requested' => $item->quantity,
-                        'available' => $product?->stock_quantity,
-                    ]);
-
-                    continue;
-                }
-
-                $product->decrement('stock_quantity', $item->quantity);
-                $product->increment('total_sales', $item->quantity);
-
-                if ($product->fresh()->stock_quantity <= 0) {
-                    $product->update(['stock_status' => 'outofstock']);
-                }
-            }
+            Log::info("Commande #{$order->number} payée via PayPal.");
         });
 
         // Envoyer les emails
