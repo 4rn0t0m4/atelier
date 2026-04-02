@@ -250,20 +250,35 @@ class BoxtalShippingService
     private function formatApiError(?array $body, int $status): string
     {
         if (! $body || ! isset($body['errors'])) {
-            return "Erreur API Boxtal (HTTP {$status})";
+            $message = $body['message'] ?? $body['error'] ?? null;
+            if ($message) {
+                return "{$message} (HTTP {$status})";
+            }
+            return "Erreur API Boxtal (HTTP {$status}) — " . json_encode($body, JSON_UNESCAPED_UNICODE);
         }
 
         $messages = [];
         foreach ($body['errors'] as $error) {
-            $msg = $error['code'] ?? 'Unknown';
-            if (isset($error['parameters'])) {
+            $msg = $error['code'] ?? $error['message'] ?? 'Unknown';
+            if (isset($error['parameters']) && is_array($error['parameters'])) {
+                $params = [];
                 foreach ($error['parameters'] as $param) {
-                    $msg .= ' — ' . ($param['field'] ?? '') . ': ' . ($param['code'] ?? '');
+                    $field = $param['field'] ?? $param['name'] ?? null;
+                    $code = $param['code'] ?? $param['message'] ?? $param['value'] ?? null;
+                    if ($field || $code) {
+                        $params[] = ($field ?: '?') . ': ' . ($code ?: '?');
+                    }
                 }
+                if ($params) {
+                    $msg .= ' — ' . implode(', ', $params);
+                }
+            }
+            if (isset($error['message']) && ($error['message'] !== ($error['code'] ?? null))) {
+                $msg .= ' (' . $error['message'] . ')';
             }
             $messages[] = $msg;
         }
 
-        return implode('; ', $messages);
+        return implode('; ', $messages) ?: "Erreur API Boxtal (HTTP {$status}) — " . json_encode($body, JSON_UNESCAPED_UNICODE);
     }
 }
