@@ -180,12 +180,24 @@ class BoxtalShippingService
                 'Accept' => 'application/json',
             ])->get($this->baseUrl() . '/shipping/v3.1/shipping-order/' . $shippingOrderId . '/document');
 
-            if ($response->successful()) {
-                $data = $response->json('content') ?? $response->json();
+            Log::debug("BoxtalShipping: récupération étiquette {$shippingOrderId}", [
+                'status' => $response->status(),
+                'body' => $response->json(),
+            ]);
 
-                if (is_array($data)) {
-                    foreach ($data as $doc) {
-                        if (isset($doc['url'])) {
+            if ($response->successful()) {
+                $data = $response->json();
+
+                // Réponse directe avec url
+                if (isset($data['url'])) {
+                    return $data['url'];
+                }
+
+                // Tableau de documents (content ou racine)
+                $docs = $data['content'] ?? $data['documents'] ?? $data;
+                if (is_array($docs)) {
+                    foreach ($docs as $doc) {
+                        if (is_array($doc) && isset($doc['url'])) {
                             return $doc['url'];
                         }
                     }
