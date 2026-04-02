@@ -20,6 +20,8 @@ class OrderController extends Controller
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
+        } elseif (! $request->filled('search')) {
+            $query->where('status', 'processing');
         }
 
         if ($request->filled('search')) {
@@ -34,11 +36,12 @@ class OrderController extends Controller
         $orders = $query->paginate(20)->withQueryString();
 
         $paidStatuses = ['processing', 'shipped', 'completed'];
+        $monthStart = now()->startOfMonth();
         $metrics = [
-            'total_orders' => Order::whereIn('status', $paidStatuses)->count(),
-            'revenue' => Order::whereIn('status', $paidStatuses)->sum('total'),
-            'items_sold' => OrderItem::whereHas('order', fn ($q) => $q->whereIn('status', $paidStatuses))->sum('quantity'),
-            'average_order' => Order::whereIn('status', $paidStatuses)->avg('total') ?: 0,
+            'total_orders' => Order::whereIn('status', $paidStatuses)->where('created_at', '>=', $monthStart)->count(),
+            'revenue' => Order::whereIn('status', $paidStatuses)->where('created_at', '>=', $monthStart)->sum('total'),
+            'items_sold' => OrderItem::whereHas('order', fn ($q) => $q->whereIn('status', $paidStatuses)->where('created_at', '>=', $monthStart))->sum('quantity'),
+            'average_order' => Order::whereIn('status', $paidStatuses)->where('created_at', '>=', $monthStart)->avg('total') ?: 0,
             'pending' => Order::where('status', 'pending')->count(),
             'processing' => Order::where('status', 'processing')->count(),
         ];

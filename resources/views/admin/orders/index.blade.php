@@ -46,7 +46,7 @@
                     <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         <option value="">Tous</option>
                         @foreach(['pending' => 'Non reglée', 'processing' => 'En cours', 'shipped' => 'Expédiée', 'completed' => 'Terminée', 'cancelled' => 'Annulée'] as $val => $lbl)
-                            <option value="{{ $val }}" {{ request('status') === $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                            <option value="{{ $val }}" {{ (request('status') ?? (request()->hasAny(['search', 'status']) ? '' : 'processing')) === $val ? 'selected' : '' }}>{{ $lbl }}</option>
                         @endforeach
                     </select>
                 </div>

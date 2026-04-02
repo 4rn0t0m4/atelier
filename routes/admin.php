@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\ReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,9 @@ use Illuminate\Support\Facades\Route;
 
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+// Statistiques
+Route::get('statistiques', [StatsController::class, 'index'])->name('admin.stats.index');
 
 // Commandes
 Route::get('commandes', [OrderController::class, 'index'])->name('admin.orders.index');
