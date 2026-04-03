@@ -172,14 +172,29 @@
                         Mettre a jour
                     </button>
 
-                    @if($order->tracking_url)
-                        <a href="{{ $order->tracking_url }}" target="_blank"
-                           class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                            </svg>
-                            Suivre l'expédition
-                        </a>
+                    @if($order->tracking_url || $order->tracking_number)
+                        @php
+                            $trackingLink = $order->tracking_url;
+                            if (!$trackingLink && $order->tracking_number) {
+                                $carrier = strtolower($order->tracking_carrier ?? '');
+                                if (str_contains($carrier, 'colissimo') || str_contains($carrier, 'laposte')) {
+                                    $trackingLink = 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number;
+                                } elseif (str_contains($carrier, 'mondial') || str_contains($carrier, 'monr')) {
+                                    $trackingLink = 'https://www.mondialrelay.fr/suivi-de-colis/?numeroExpedition=' . $order->tracking_number;
+                                } elseif (str_contains($carrier, 'chronopost')) {
+                                    $trackingLink = 'https://www.chronopost.fr/tracking-no-powerful/tracking-unified/?liession=' . $order->tracking_number;
+                                }
+                            }
+                        @endphp
+                        @if($trackingLink)
+                            <a href="{{ $trackingLink }}" target="_blank"
+                               class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                </svg>
+                                Suivre l'expédition
+                            </a>
+                        @endif
                     @endif
                 </form>
             </div>
