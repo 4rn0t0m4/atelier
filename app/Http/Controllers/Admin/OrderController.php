@@ -73,6 +73,7 @@ class OrderController extends Controller
             'status' => 'required|string|in:pending,processing,shipped,completed,cancelled,refunded',
             'tracking_number' => 'nullable|string|max:255',
             'tracking_carrier' => 'nullable|string|max:255',
+            'tracking_url' => 'nullable|url|max:500',
             'customer_note' => 'nullable|string|max:1000',
         ]);
 
