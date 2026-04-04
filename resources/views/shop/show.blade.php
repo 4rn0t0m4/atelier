@@ -260,7 +260,18 @@ $breadcrumbJsonLd = json_encode([
             @endif
 
             {{-- Formulaire ajout panier --}}
-            <form action="{{ route('cart.add') }}" method="POST" class="space-y-4">
+            <form action="{{ route('cart.add') }}" method="POST" class="space-y-4"
+                  @submit="if (typeof gtag !== 'undefined') gtag('event', 'add_to_cart', {
+                      currency: 'EUR',
+                      value: {{ $product->effective_price }} * qty,
+                      items: [{
+                          item_id: '{{ $product->sku ?: $product->id }}',
+                          item_name: '{{ addslashes($product->name) }}',
+                          item_category: '{{ addslashes($product->category?->name ?? '') }}',
+                          price: {{ $product->effective_price }},
+                          quantity: qty
+                      }]
+                  })">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
 
@@ -524,6 +535,23 @@ $breadcrumbJsonLd = json_encode([
         </div>
     </div>
 </section>
+@endif
+
+{{-- GA4 view_item --}}
+@if(config('tracking.google_analytics_id'))
+<script>
+    gtag('event', 'view_item', {
+        currency: 'EUR',
+        value: {{ $product->effective_price }},
+        items: [{
+            item_id: '{{ $product->sku ?: $product->id }}',
+            item_name: '{{ addslashes($product->name) }}',
+            item_category: '{{ addslashes($product->category?->name ?? '') }}',
+            price: {{ $product->effective_price }},
+            quantity: 1
+        }]
+    });
+</script>
 @endif
 
 </x-layouts.app>

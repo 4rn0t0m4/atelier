@@ -97,9 +97,11 @@
         transaction_id: '{{ $order->number }}',
         value: {{ $order->total }},
         currency: 'EUR',
+        shipping: {{ $order->shipping_total }},
+        @if($order->coupon_code)coupon: '{{ $order->coupon_code }}',@endif
         items: [
             @foreach($order->items as $item)
-            { item_name: '{{ addslashes($item->product_name) }}', quantity: {{ $item->quantity }}, price: {{ $item->unit_price }} },
+            { item_id: '{{ addslashes($item->sku ?: $item->product_id) }}', item_name: '{{ addslashes($item->product_name) }}', price: {{ $item->unit_price }}, quantity: {{ $item->quantity }} },
             @endforeach
         ]
     });

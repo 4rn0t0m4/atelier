@@ -1,4 +1,21 @@
 <x-layouts.app title="Paiement" :noindex="true">
+
+{{-- GA4 add_payment_info --}}
+@if(config('tracking.google_analytics_id'))
+<script>
+    gtag('event', 'add_payment_info', {
+        currency: 'EUR',
+        value: {{ $order->total }},
+        payment_type: '{{ $paymentMethod }}',
+        items: [
+            @foreach($order->items as $item)
+            { item_id: '{{ addslashes($item->sku ?: $item->product_id) }}', item_name: '{{ addslashes($item->product_name) }}', price: {{ $item->unit_price }}, quantity: {{ $item->quantity }} },
+            @endforeach
+        ]
+    });
+</script>
+@endif
+
 <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     <h1 class="text-2xl font-semibold text-brand-900 mb-2" style="font-family: Georgia, serif;">Paiement</h1>

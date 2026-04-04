@@ -1,4 +1,20 @@
 <x-layouts.app title="Finaliser la commande" :noindex="true">
+
+{{-- GA4 begin_checkout --}}
+@if(config('tracking.google_analytics_id'))
+<script>
+    gtag('event', 'begin_checkout', {
+        currency: 'EUR',
+        value: {{ $subtotal }},
+        items: [
+            @foreach($items as $item)
+            { item_id: '{{ $item['product']->sku ?: $item['product']->id }}', item_name: '{{ addslashes($item['product']->name) }}', price: {{ $item['price'] }}, quantity: {{ $item['quantity'] }} },
+            @endforeach
+        ]
+    });
+</script>
+@endif
+
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     <h1 class="text-2xl font-semibold text-brand-900 mb-8" style="font-family: Georgia, serif;">
@@ -549,7 +565,17 @@
 
                     <button type="submit"
                             class="mt-6 w-full bg-brand-700 text-white py-3 px-6 rounded font-medium hover:bg-brand-800 transition text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                            :disabled="isRelayMethod && !relayPointCode">
+                            :disabled="isRelayMethod && !relayPointCode"
+                            @click="if (typeof gtag !== 'undefined') gtag('event', 'add_shipping_info', {
+                                currency: 'EUR',
+                                value: subtotal,
+                                shipping_tier: shippingMethod,
+                                items: [
+                                    @foreach($items as $item)
+                                    { item_id: '{{ $item['product']->sku ?: $item['product']->id }}', item_name: '{{ addslashes($item['product']->name) }}', price: {{ $item['price'] }}, quantity: {{ $item['quantity'] }} },
+                                    @endforeach
+                                ]
+                            })">
                         Passer au règlement →
                     </button>
 

@@ -1,4 +1,20 @@
 <x-layouts.app title="Mon panier">
+
+{{-- GA4 view_cart --}}
+@if(config('tracking.google_analytics_id') && !empty($items))
+<script>
+    gtag('event', 'view_cart', {
+        currency: 'EUR',
+        value: {{ $subtotal }},
+        items: [
+            @foreach($items as $item)
+            { item_id: '{{ $item['product']->sku ?: $item['product']->id }}', item_name: '{{ addslashes($item['product']->name) }}', price: {{ $item['price'] }}, quantity: {{ $item['quantity'] }} },
+            @endforeach
+        ]
+    });
+</script>
+@endif
+
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <h1 class="text-2xl font-semibold text-gray-900 mb-8">Mon panier</h1>
 
