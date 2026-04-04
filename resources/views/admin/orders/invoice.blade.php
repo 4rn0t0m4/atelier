@@ -102,8 +102,8 @@
                         {{ $item->product_name }}
                         @if($item->sku)<br><span style="color: #999; font-size: 10px;">SKU: {{ $item->sku }}</span>@endif
                         @foreach($item->addons as $addon)
-                            <br><span class="addon">+ {{ $addon->group_name }}: {{ $addon->addon_name }}
-                                @if($addon->price > 0)({{ number_format($addon->price, 2, ',', ' ') }} &euro;)@endif
+                            <br><span class="addon">+ {{ $addon->addon_label }}: {{ $addon->addon_value }}
+                                @if($addon->addon_price > 0)({{ number_format($addon->addon_price, 2, ',', ' ') }} &euro;)@endif
                             </span>
                         @endforeach
                     </td>
