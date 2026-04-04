@@ -108,7 +108,9 @@ class OrderController extends Controller
         $pdf = Pdf::loadView('admin.orders.invoice', compact('order'));
         $pdf->setPaper('a4');
 
-        return $pdf->download("facture-{$order->number}.pdf");
+        $filename = $order->invoice_number ? "facture-{$order->invoice_number}.pdf" : "facture-{$order->number}.pdf";
+
+        return $pdf->download($filename);
     }
 
     public function createShipment(Request $request, Order $order, BoxtalShippingService $boxtal)

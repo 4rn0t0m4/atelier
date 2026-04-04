@@ -42,7 +42,9 @@
             <td style="width: 50%; vertical-align: top; text-align: right;">
                 <div class="invoice-title">FACTURE</div>
                 <div class="meta">
-                    N° {{ $order->number }}<br>
+                    @if($order->invoice_number)
+                        N° {{ $order->invoice_number }}<br>
+                    @endif
                     Date : {{ $order->created_at->format('d/m/Y') }}<br>
                     @if($order->paid_at)
                         Payée le : {{ $order->paid_at->format('d/m/Y') }}
