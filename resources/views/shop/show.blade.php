@@ -458,6 +458,12 @@ $breadcrumbJsonLd = json_encode([
 
             <form action="{{ route('shop.review.store', $product) }}" method="POST" class="space-y-4" data-turbo="false">
                 @csrf
+                {{-- Honeypot anti-spam --}}
+                <div aria-hidden="true" style="position:absolute;left:-9999px;">
+                    <label for="review_website">Ne pas remplir</label>
+                    <input type="text" name="website" id="review_website" tabindex="-1" autocomplete="off">
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="author_name" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>

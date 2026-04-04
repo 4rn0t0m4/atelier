@@ -164,6 +164,11 @@ class ShopController extends Controller
 
     public function storeReview(Request $request, Product $product)
     {
+        // Honeypot anti-spam
+        if ($request->filled('website')) {
+            return back()->with('review_success', 'Merci pour votre avis ! Il sera publié après validation.');
+        }
+
         $validated = $request->validate([
             'author_name' => 'required|string|max:100',
             'author_email' => 'required|email|max:255',
