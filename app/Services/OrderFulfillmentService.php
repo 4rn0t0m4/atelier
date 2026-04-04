@@ -28,12 +28,27 @@ class OrderFulfillmentService
         $locked->update([
             'status' => 'processing',
             'paid_at' => now(),
+            'invoice_number' => self::nextInvoiceNumber(),
         ]);
 
         $locked->load('items');
         $this->decrementStock($locked);
 
         return true;
+    }
+
+    /**
+     * Génère le prochain numéro de facture (AA + séquence sans trou).
+     */
+    public static function nextInvoiceNumber(): string
+    {
+        $last = Order::whereNotNull('invoice_number')
+            ->orderByRaw('CAST(SUBSTRING(invoice_number, 3) AS UNSIGNED) DESC')
+            ->value('invoice_number');
+
+        $lastSeq = $last ? (int) substr($last, 2) : 0;
+
+        return 'AA' . str_pad($lastSeq + 1, 5, '0', STR_PAD_LEFT);
     }
 
     /**
