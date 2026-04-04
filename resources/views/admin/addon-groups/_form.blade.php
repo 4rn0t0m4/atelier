@@ -82,6 +82,7 @@
                                         <label class="block text-xs font-medium text-gray-600 mb-1">Type de champ</label>
                                         <select :name="'addons['+addonIndex+'][type]'" x-model="addon.type"
                                                 class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                                            <option value="heading">Titre / Séparateur</option>
                                             <option value="text">Texte court</option>
                                             <option value="textarea">Texte long</option>
                                             <option value="select">Liste déroulante</option>
