@@ -153,40 +153,42 @@ $breadcrumbJsonLd = json_encode([
                 </div>
             @endif
 
-            {{-- Lightbox --}}
+            {{-- Lightbox (teleported to body to escape sticky stacking context) --}}
             @if($allImages->isNotEmpty())
-                <div x-show="lightbox" x-cloak
-                     class="fixed inset-0 z-[100] flex items-center justify-center p-4"
-                     style="background-color: rgba(0,0,0,0.88);"
-                     @click.self="lightbox = false"
-                     @keydown.escape.window="lightbox = false"
-                     @keydown.left.window="if(lightbox) active = (active - 1 + images.length) % images.length"
-                     @keydown.right.window="if(lightbox) active = (active + 1) % images.length">
-                    <button @click="lightbox = false"
-                            class="absolute top-4 right-5 text-white opacity-60 hover:opacity-100 transition text-4xl leading-none font-light z-10"
-                            aria-label="Fermer">&times;</button>
-                    {{-- Fleche gauche --}}
-                    <button @click="active = (active - 1 + images.length) % images.length"
-                            class="absolute left-4 sm:left-8 text-white opacity-60 hover:opacity-100 transition z-10"
-                            aria-label="Precedente">
-                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </button>
-                    <img :src="images[active]"
-                         alt="{{ $product->name }}"
-                         class="max-h-[90vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl">
-                    {{-- Fleche droite --}}
-                    <button @click="active = (active + 1) % images.length"
-                            class="absolute right-4 sm:right-8 text-white opacity-60 hover:opacity-100 transition z-10"
-                            aria-label="Suivante">
-                        <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-                        </svg>
-                    </button>
-                    {{-- Compteur --}}
-                    <span class="absolute bottom-4 text-white text-sm opacity-60" x-text="(active + 1) + ' / ' + images.length"></span>
-                </div>
+                <template x-teleport="body">
+                    <div x-show="lightbox" x-cloak
+                         class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                         style="background-color: rgba(0,0,0,0.88);"
+                         @click.self="lightbox = false"
+                         @keydown.escape.window="lightbox = false"
+                         @keydown.left.window="if(lightbox) active = (active - 1 + images.length) % images.length"
+                         @keydown.right.window="if(lightbox) active = (active + 1) % images.length">
+                        <button @click="lightbox = false"
+                                class="absolute top-4 right-5 text-white opacity-60 hover:opacity-100 transition text-4xl leading-none font-light z-10"
+                                aria-label="Fermer">&times;</button>
+                        {{-- Fleche gauche --}}
+                        <button @click="active = (active - 1 + images.length) % images.length"
+                                class="absolute left-4 sm:left-8 text-white opacity-60 hover:opacity-100 transition z-10"
+                                aria-label="Precedente">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+                        <img :src="images[active]"
+                             alt="{{ $product->name }}"
+                             class="max-h-[90vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl">
+                        {{-- Fleche droite --}}
+                        <button @click="active = (active + 1) % images.length"
+                                class="absolute right-4 sm:right-8 text-white opacity-60 hover:opacity-100 transition z-10"
+                                aria-label="Suivante">
+                            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                        {{-- Compteur --}}
+                        <span class="absolute bottom-4 text-white text-sm opacity-60" x-text="(active + 1) + ' / ' + images.length"></span>
+                    </div>
+                </template>
             @endif
         </div>
 
