@@ -110,7 +110,7 @@ $breadcrumbJsonLd = json_encode([
             if ($product->featuredImage) $allImages->push($product->featuredImage);
             $allImages = $allImages->merge($galleryImages);
         @endphp
-        <div x-data="{ active: 0, lightbox: false, images: {{ $allImages->pluck('url')->toJson() }}, init() { this.$watch('lightbox', v => this.$dispatch(v ? 'lightbox-opened' : 'lightbox-closed')) } }"
+        <div x-data="{ active: 0, lightbox: false, images: {{ $allImages->pluck('url')->toJson() }}, init() { this.$watch('lightbox', v => { document.body.classList.toggle('lightbox-open', v); this.$dispatch(v ? 'lightbox-opened' : 'lightbox-closed') }) } }"
              class="lg:sticky lg:top-6 lg:self-start">
             {{-- Image principale --}}
             <div class="aspect-square rounded-3xl overflow-hidden mb-3 relative group bg-brand-50">

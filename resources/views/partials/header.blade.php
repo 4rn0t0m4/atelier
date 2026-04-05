@@ -24,8 +24,6 @@
 <div class="relative flex items-center justify-center"
      x-data="{ y: 0 }"
      x-on:scroll.window.throttle.10ms="y = window.scrollY"
-     @lightbox-opened.window="$el.style.zIndex = '-1'"
-     @lightbox-closed.window="$el.style.zIndex = ''"
      :style="'height: 300px; background-image: url({{ asset('images/header-banner.jpg') }}); background-size: cover; background-position: center ' + (5 + y * 0.18) + '%;'"
      style="height: 300px; background-image: url('{{ asset('images/header-banner.jpg') }}'); background-size: cover; background-position: center 5%;">
     <a href="{{ route('home') }}" class="relative z-10">
@@ -37,8 +35,7 @@
 {{-- Navigation principale --}}
 <header class="sticky top-0 z-50 bg-white border-b border-gray-200"
         x-data="{ mobileOpen: false, openMenu: null }"
-        @lightbox-opened.window="$el.style.zIndex = '0'"
-        @lightbox-closed.window="$el.style.zIndex = ''">
+>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-center h-14">
 

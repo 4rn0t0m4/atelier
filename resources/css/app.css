@@ -20,6 +20,9 @@
 
 [x-cloak] { display: none !important; }
 
+/* Hide header behind product lightbox */
+body.lightbox-open header.sticky { z-index: auto !important; position: relative !important; }
+
 html {
     scroll-behavior: smooth;
 }
