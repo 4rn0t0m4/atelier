@@ -86,6 +86,22 @@
                 setTimeout(function() { errorsDiv.classList.add('hidden'); }, 8000);
             }
 
+            function logPayPalError(error, context) {
+                fetch('{{ route('paypal.log-error') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        error: String(error),
+                        context: context
+                    })
+                }).catch(function() {});
+            }
+
             paypal.Buttons({
                 style: {
                     layout: 'vertical',
@@ -107,10 +123,15 @@
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
                         if (data.error) {
+                            logPayPalError(data.error, 'createOrder');
                             showError(data.error);
                             throw new Error(data.error);
                         }
                         return data.id;
+                    })
+                    .catch(function(err) {
+                        logPayPalError(err.message || err, 'createOrder:fetch');
+                        throw err;
                     });
                 },
                 onApprove: function(data) {
@@ -129,17 +150,23 @@
                     .then(function(res) { return res.json(); })
                     .then(function(data) {
                         if (data.error) {
+                            logPayPalError(data.error, 'captureOrder');
                             showError(data.error);
                             return;
                         }
                         window.location.href = data.redirect;
+                    })
+                    .catch(function(err) {
+                        logPayPalError(err.message || err, 'captureOrder:fetch');
+                        showError('Une erreur est survenue lors de la capture du paiement.');
                     });
                 },
                 onError: function(err) {
+                    logPayPalError(err.message || String(err), 'onError');
                     showError('Une erreur est survenue avec PayPal. Veuillez réessayer.');
-                    console.error('PayPal error:', err);
                 },
                 onCancel: function() {
+                    logPayPalError('Paiement annulé par le client', 'onCancel');
                     showError('Paiement annulé.');
                 }
             }).render('#paypal-button-container');

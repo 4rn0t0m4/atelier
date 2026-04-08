@@ -21,6 +21,27 @@ class PayPalController extends Controller
     ) {}
 
     /**
+     * Logge une erreur PayPal côté client.
+     */
+    public function logError(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required|integer',
+            'error' => 'required|string|max:2000',
+            'context' => 'nullable|string|max:500',
+        ]);
+
+        Log::warning('PayPal erreur client', [
+            'order_id' => $request->order_id,
+            'user_id' => auth()->id(),
+            'error' => $request->error,
+            'context' => $request->context,
+        ]);
+
+        return response()->json(['logged' => true]);
+    }
+
+    /**
      * Crée une commande PayPal pour une commande existante.
      */
     public function createOrder(Request $request)

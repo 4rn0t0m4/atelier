@@ -49,6 +49,7 @@ Route::post('/api/boxtal/webhook', [BoxtalWebhookController::class, 'handle'])->
 // PayPal
 Route::post('/api/paypal/create-order', [PayPalController::class, 'createOrder'])->name('paypal.create-order');
 Route::post('/api/paypal/capture-order', [PayPalController::class, 'captureOrder'])->name('paypal.capture-order');
+Route::post('/api/paypal/log-error', [PayPalController::class, 'logError'])->name('paypal.log-error');
 
 // Authentification (guest)
 Route::middleware('guest')->group(function () {
