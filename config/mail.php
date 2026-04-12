@@ -65,10 +65,6 @@ return [
             // ],
         ],
 
-        'brevo' => [
-            'transport' => 'brevo',
-        ],
-
         'sendmail' => [
             'transport' => 'sendmail',
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
