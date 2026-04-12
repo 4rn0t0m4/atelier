@@ -105,9 +105,9 @@ class PayPalService
 
         try {
             $response = Http::withToken($token)
-                ->asJson()
+                ->contentType('application/json')
                 ->acceptJson()
-                ->post($this->baseUrl() . "/v2/checkout/orders/{$paypalOrderId}/capture", []);
+                ->post($this->baseUrl() . "/v2/checkout/orders/{$paypalOrderId}/capture");
 
             if ($response->successful() && $response->json('status') === 'COMPLETED') {
                 return ['success' => true, 'error' => null];
