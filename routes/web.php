@@ -82,6 +82,16 @@ Route::prefix('/mon-compte')->name('account.')->middleware('auth')->group(functi
 Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contact', [ContactController::class, 'send'])->name('contact.send')->middleware('throttle:5,1');
 
+// Cron web (OVH bloque SMTP/HTTPS depuis SSH)
+Route::get('/cron/review-requests', function (\Illuminate\Http\Request $request) {
+    if ($request->query('token') !== config('app.cron_token')) {
+        abort(403);
+    }
+    \Illuminate\Support\Facades\Artisan::call('orders:send-review-requests');
+    return response(\Illuminate\Support\Facades\Artisan::output(), 200)
+        ->header('Content-Type', 'text/plain');
+})->name('cron.review-requests');
+
 // Sitemap
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
 
