@@ -17,24 +17,32 @@ class PayPalService
 
     private function getAccessToken(): ?string
     {
-        return Cache::remember('paypal_access_token', 3200, function () {
-            $response = Http::asForm()
-                ->withBasicAuth(
-                    config('services.paypal.client_id'),
-                    config('services.paypal.client_secret')
-                )
-                ->post($this->baseUrl() . '/v1/oauth2/token', [
-                    'grant_type' => 'client_credentials',
-                ]);
+        $token = Cache::get('paypal_access_token');
 
-            if ($response->successful()) {
-                return $response->json('access_token');
-            }
+        if ($token) {
+            return $token;
+        }
 
-            Log::error('PayPal: échec obtention token', ['body' => $response->body()]);
+        $response = Http::asForm()
+            ->withBasicAuth(
+                config('services.paypal.client_id'),
+                config('services.paypal.client_secret')
+            )
+            ->post($this->baseUrl() . '/v1/oauth2/token', [
+                'grant_type' => 'client_credentials',
+            ]);
 
-            return null;
-        });
+        if ($response->successful()) {
+            $token = $response->json('access_token');
+            $expiresIn = $response->json('expires_in', 3600) - 60;
+            Cache::put('paypal_access_token', $token, $expiresIn);
+
+            return $token;
+        }
+
+        Log::error('PayPal: échec obtention token', ['body' => $response->body()]);
+
+        return null;
     }
 
     /**
@@ -52,6 +60,8 @@ class PayPalService
 
         try {
             $response = Http::withToken($token)
+                ->asJson()
+                ->acceptJson()
                 ->post($this->baseUrl() . '/v2/checkout/orders', [
                     'intent' => 'CAPTURE',
                     'purchase_units' => [
@@ -95,7 +105,9 @@ class PayPalService
 
         try {
             $response = Http::withToken($token)
-                ->post($this->baseUrl() . "/v2/checkout/orders/{$paypalOrderId}/capture");
+                ->asJson()
+                ->acceptJson()
+                ->post($this->baseUrl() . "/v2/checkout/orders/{$paypalOrderId}/capture", []);
 
             if ($response->successful() && $response->json('status') === 'COMPLETED') {
                 return ['success' => true, 'error' => null];

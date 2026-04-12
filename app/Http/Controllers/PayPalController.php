@@ -48,11 +48,17 @@ class PayPalController extends Controller
     {
         $request->validate(['order_id' => 'required|integer']);
 
-        $order = Order::where('id', $request->order_id)
-            ->where('user_id', auth()->id())
+        $query = Order::where('id', $request->order_id)
             ->where('payment_method', 'paypal')
-            ->where('status', 'pending')
-            ->firstOrFail();
+            ->where('status', 'pending');
+
+        if (auth()->check()) {
+            $query->where('user_id', auth()->id());
+        } else {
+            $query->whereNull('user_id');
+        }
+
+        $order = $query->firstOrFail();
 
         $result = $this->paypal->createOrder($order->total, $order->number);
 
@@ -75,11 +81,17 @@ class PayPalController extends Controller
             'paypal_order_id' => 'required|string',
         ]);
 
-        $order = Order::where('id', $request->order_id)
-            ->where('user_id', auth()->id())
+        $query = Order::where('id', $request->order_id)
             ->where('payment_method', 'paypal')
-            ->where('status', 'pending')
-            ->firstOrFail();
+            ->where('status', 'pending');
+
+        if (auth()->check()) {
+            $query->where('user_id', auth()->id());
+        } else {
+            $query->whereNull('user_id');
+        }
+
+        $order = $query->firstOrFail();
 
         $result = $this->paypal->captureOrder($request->paypal_order_id);
 
