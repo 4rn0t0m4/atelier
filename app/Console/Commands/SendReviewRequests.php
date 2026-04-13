@@ -21,6 +21,7 @@ class SendReviewRequests extends Command
         $orders = Order::whereNotNull('shipped_at')
             ->whereNull('review_requested_at')
             ->where('shipped_at', '<=', now()->subDays(7))
+            ->where('shipped_at', '>=', '2026-04-01')
             ->whereIn('status', ['processing', 'shipped', 'completed'])
             ->with(['items.product.featuredImage'])
             ->latest('shipped_at')
