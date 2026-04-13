@@ -446,6 +446,12 @@ $breadcrumbJsonLd = json_encode([
                                     @endfor
                                 </div>
                                 <span class="text-sm font-medium text-gray-800">{{ $review->author_name }}</span>
+                                @if($review->isVerifiedPurchase())
+                                    <span class="inline-flex items-center gap-1 text-xs text-green-700 bg-green-50 border border-green-200 rounded-full px-2 py-0.5">
+                                        <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                                        Achat vérifié
+                                    </span>
+                                @endif
                             </div>
                             <span class="text-xs text-gray-400">{{ $review->created_at->format('d/m/Y') }}</span>
                         </div>
