@@ -144,9 +144,29 @@
                        class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
             </div>
 
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Lien de suivi</label>
+                <input type="url" name="tracking_url" value="{{ $order->tracking_url }}"
+                       placeholder="https://..."
+                       class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
+            </div>
+
             <button type="submit" class="w-full py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">
                 Mettre à jour
             </button>
+
+            @php
+                $trackingLink = $order->tracking_url ?: ($order->tracking_number ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number : null);
+            @endphp
+            @if($trackingLink)
+                    <a href="{{ $trackingLink }}" target="_blank"
+                       class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                        </svg>
+                        Suivre l'expédition
+                    </a>
+            @endif
         </form>
     </div>
 

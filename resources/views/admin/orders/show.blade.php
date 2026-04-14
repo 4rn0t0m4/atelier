@@ -172,21 +172,10 @@
                         Mettre a jour
                     </button>
 
-                    @if($order->tracking_url || $order->tracking_number)
-                        @php
-                            $trackingLink = $order->tracking_url;
-                            if (!$trackingLink && $order->tracking_number) {
-                                $carrier = strtolower($order->tracking_carrier ?? '');
-                                if (str_contains($carrier, 'colissimo') || str_contains($carrier, 'laposte')) {
-                                    $trackingLink = 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number;
-                                } elseif (str_contains($carrier, 'mondial') || str_contains($carrier, 'monr')) {
-                                    $trackingLink = 'https://www.mondialrelay.fr/suivi-de-colis/?numeroExpedition=' . $order->tracking_number;
-                                } elseif (str_contains($carrier, 'chronopost')) {
-                                    $trackingLink = 'https://www.chronopost.fr/tracking-no-powerful/tracking-unified/?liession=' . $order->tracking_number;
-                                }
-                            }
-                        @endphp
-                        @if($trackingLink)
+                    @php
+                        $trackingLink = $order->tracking_url ?: ($order->tracking_number ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number : null);
+                    @endphp
+                    @if($trackingLink)
                             <a href="{{ $trackingLink }}" target="_blank"
                                class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +183,6 @@
                                 </svg>
                                 Suivre l'expédition
                             </a>
-                        @endif
                     @endif
                 </form>
             </div>
