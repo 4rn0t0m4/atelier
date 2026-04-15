@@ -96,7 +96,9 @@ class CheckoutController extends Controller
             }
         }
 
-        return view('checkout.index', compact('items', 'subtotal', 'discount', 'shippingMethods', 'shippingCountries', 'shippingZones', 'prefill'));
+        $allLightShipping = collect($items)->every(fn ($item) => $item['product']?->light_shipping);
+
+        return view('checkout.index', compact('items', 'subtotal', 'discount', 'shippingMethods', 'shippingCountries', 'shippingZones', 'prefill', 'allLightShipping'));
     }
 
     public function store(CheckoutStoreRequest $request)
@@ -130,7 +132,7 @@ class CheckoutController extends Controller
         $shippingKey = $request->shipping_method;
         $shippingSame = $request->boolean('shipping_same', false);
         $shippingCountry = $shippingSame ? $request->billing_country : ($request->shipping_country ?? $request->billing_country);
-        $shippingCost = $this->orderService->calculateShipping($shippingKey, $subtotal, $shippingCountry);
+        $shippingCost = $this->orderService->calculateShipping($shippingKey, $subtotal, $shippingCountry, $items);
 
         if ($discount['free_shipping']) {
             $shippingCost = 0;

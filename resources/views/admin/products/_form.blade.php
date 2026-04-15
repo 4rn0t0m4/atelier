@@ -85,6 +85,14 @@
                        class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                 Gerer le stock (decrementer a la vente)
             </label>
+
+            <label class="flex items-center gap-2 text-sm text-gray-600">
+                <input type="hidden" name="light_shipping" value="0">
+                <input type="checkbox" name="light_shipping" value="1"
+                       {{ old('light_shipping', $product->light_shipping ?? false) ? 'checked' : '' }}
+                       class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
+                Produit léger (livraison à domicile à {{ number_format(config('shipping.methods.colissimo.light_price', 3.50), 2, ',', ' ') }} €)
+            </label>
         </div>
 
         {{-- Addon groups --}}

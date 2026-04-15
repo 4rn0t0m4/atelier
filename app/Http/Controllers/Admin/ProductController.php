@@ -61,6 +61,7 @@ class ProductController extends Controller
             'sku' => 'nullable|string|max:100',
             'stock_quantity' => 'nullable|integer|min:0',
             'manage_stock' => 'boolean',
+            'light_shipping' => 'boolean',
             'stock_status' => 'required|in:instock,outofstock,onbackorder',
             'weight' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:product_categories,id',
@@ -79,6 +80,7 @@ class ProductController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['manage_stock'] = $request->boolean('manage_stock');
+        $validated['light_shipping'] = $request->boolean('light_shipping');
         $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
         $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 
@@ -114,6 +116,7 @@ class ProductController extends Controller
             'sku' => 'nullable|string|max:100',
             'stock_quantity' => 'nullable|integer|min:0',
             'manage_stock' => 'boolean',
+            'light_shipping' => 'boolean',
             'stock_status' => 'required|in:instock,outofstock,onbackorder',
             'weight' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:product_categories,id',
@@ -132,6 +135,7 @@ class ProductController extends Controller
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['manage_stock'] = $request->boolean('manage_stock');
+        $validated['light_shipping'] = $request->boolean('light_shipping');
         $validated['featured_image_id'] = $request->input('featured_image_id') ?: null;
         $validated['gallery_image_ids'] = json_decode($request->input('gallery_image_ids', '[]'), true) ?: null;
 

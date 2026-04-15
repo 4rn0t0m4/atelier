@@ -54,6 +54,7 @@ return [
         'colissimo' => [
             'label' => 'Livraison à domicile (Colissimo)',
             'price' => 7.90,
+            'light_price' => 3.50,
         ],
         'boxtal' => [
             'label' => 'Livraison en point relais',

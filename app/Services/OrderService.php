@@ -58,9 +58,14 @@ class OrderService
     /**
      * Calcule le coût de livraison.
      */
-    public function calculateShipping(string $shippingKey, float $subtotal, string $country = 'FR'): float
+    public function calculateShipping(string $shippingKey, float $subtotal, string $country = 'FR', array $cartItems = []): float
     {
-        $cost = (float) config("shipping.methods.{$shippingKey}.price", 0);
+        $allLight = ! empty($cartItems) && collect($cartItems)->every(fn ($item) => $item['product']?->light_shipping);
+
+        $lightPrice = config("shipping.methods.{$shippingKey}.light_price");
+        $cost = ($allLight && $lightPrice !== null)
+            ? (float) $lightPrice
+            : (float) config("shipping.methods.{$shippingKey}.price", 0);
 
         $zone = $this->getShippingZone($country);
         $threshold = config("shipping.zones.{$zone}.free_shipping_threshold");

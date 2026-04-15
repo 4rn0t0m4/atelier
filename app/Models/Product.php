@@ -11,7 +11,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'slug', 'short_description', 'description',
         'price', 'sale_price', 'sku', 'stock_quantity', 'manage_stock',
-        'stock_status', 'weight', 'is_active', 'is_featured',
+        'stock_status', 'weight', 'light_shipping', 'is_active', 'is_featured',
         'excluded_global_group_ids',
         'meta_title', 'meta_description', 'featured_image_id',
         'gallery_image_ids', 'total_sales',
@@ -22,6 +22,7 @@ class Product extends Model
         'sale_price' => 'decimal:2',
         'weight' => 'decimal:3',
         'manage_stock' => 'boolean',
+        'light_shipping' => 'boolean',
         'is_active' => 'boolean',
         'is_featured' => 'boolean',
         'excluded_global_group_ids' => 'array',

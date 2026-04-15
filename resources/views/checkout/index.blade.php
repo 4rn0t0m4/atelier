@@ -27,7 +27,7 @@
               shippingMethod: '{{ old('shipping_method', 'colissimo') }}',
               billingCountry: '{{ old('billing_country', $prefill['billing_country'] ?? 'FR') }}',
               shippingCountryField: '{{ old('shipping_country', $prefill['shipping_country'] ?? 'FR') }}',
-              shippingPrices: @js(collect($shippingMethods)->mapWithKeys(fn($m, $k) => [$k => $m['price']])),
+              shippingPrices: @js(collect($shippingMethods)->mapWithKeys(fn($m, $k) => [$k => ($allLightShipping && isset($m['light_price'])) ? $m['light_price'] : $m['price']])),
               shippingZones: @js($shippingZones),
               subtotal: {{ $subtotal }},
               discountAmount: {{ $discount['amount'] }},
@@ -352,16 +352,19 @@
                                            {{ old('shipping_method', 'colissimo') === $key ? 'checked' : '' }}>
                                     <span class="text-sm font-medium text-gray-900">{{ $method['label'] }}</span>
                                 </div>
+                                @php
+                                    $displayPrice = ($allLightShipping && isset($method['light_price'])) ? $method['light_price'] : $method['price'];
+                                @endphp
                                 <span class="text-sm font-semibold text-gray-700">
                                     @if(!empty($method['free_above_threshold']))
                                         <template x-if="freeShippingThreshold && subtotal >= freeShippingThreshold">
                                             <span class="text-brand-700">Gratuit</span>
                                         </template>
                                         <template x-if="!freeShippingThreshold || subtotal < freeShippingThreshold">
-                                            <span>{{ number_format($method['price'], 2, ',', ' ') }} €</span>
+                                            <span>{{ number_format($displayPrice, 2, ',', ' ') }} €</span>
                                         </template>
                                     @else
-                                        {{ $method['price'] > 0 ? number_format($method['price'], 2, ',', ' ') . ' €' : 'Gratuit' }}
+                                        {{ $displayPrice > 0 ? number_format($displayPrice, 2, ',', ' ') . ' €' : 'Gratuit' }}
                                     @endif
                                 </span>
                             </label>
