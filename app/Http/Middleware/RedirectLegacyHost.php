@@ -11,7 +11,9 @@ class RedirectLegacyHost
     {
         $host = $request->getHost();
 
-        if (str_starts_with($host, 'new.') || str_starts_with($host, 'www.new.')) {
+        if ($host === 'atelier-aubin.fr'
+            || str_starts_with($host, 'new.')
+            || str_starts_with($host, 'www.new.')) {
             $target = 'https://www.atelier-aubin.fr' . $request->getRequestUri();
 
             return redirect($target, 301);
