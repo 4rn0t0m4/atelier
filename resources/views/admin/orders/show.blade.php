@@ -252,7 +252,7 @@
                                     Voir / imprimer l'étiquette
                                 </a>
                             @else
-                                <a href="{{ route('admin.orders.label', $order) }}"
+                                <a href="{{ route('admin.orders.label', $order) }}" target="_blank"
                                    class="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                     Récupérer l'étiquette
