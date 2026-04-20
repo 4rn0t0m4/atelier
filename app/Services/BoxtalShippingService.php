@@ -118,12 +118,12 @@ class BoxtalShippingService
                 ],
                 'toAddress' => [
                     'type' => 'RESIDENTIAL',
-                    'contact' => [
+                    'contact' => array_filter([
                         'firstName' => $order->shipping_first_name ?: $order->billing_first_name,
                         'lastName' => $order->shipping_last_name ?: $order->billing_last_name,
                         'email' => $order->billing_email,
-                        'phone' => $order->billing_phone ?? '',
-                    ],
+                        'phone' => $order->billing_phone ?: null,
+                    ]),
                     'location' => [
                         'street' => trim(($order->shipping_address_1 ?: $order->billing_address_1) . ' ' . ($order->shipping_address_2 ?: $order->billing_address_2 ?? '')),
                         'city' => $order->shipping_city ?: $order->billing_city,
