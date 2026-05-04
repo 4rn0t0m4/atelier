@@ -32,7 +32,7 @@
                                         @endif
                                         @foreach($item->addons as $addon)
                                             <div class="text-xs text-gray-500 mt-0.5">
-                                                + {{ $addon->addon_label }}: {{ $addon->addon_value }}
+                                                + {{ $addon->addon_label }}: {!! nl2br(e($addon->addon_value)) !!}
                                                 @if($addon->addon_price > 0)
                                                     ({{ number_format($addon->addon_price, 2, ',', ' ') }} &euro;)
                                                 @endif
