@@ -64,8 +64,22 @@
                             <div class="text-xs text-gray-400">{{ $review->author_email }}</div>
                         @endif
                     </td>
-                    <td class="px-6 py-3 text-gray-600 max-w-xs">
-                        {{ Str::limit($review->content, 80) }}
+                    <td class="px-6 py-3 text-gray-600 max-w-md" x-data="{ open: false }">
+                        @if(Str::length($review->content) > 80)
+                            <span x-show="!open">{{ Str::limit($review->content, 80) }} <button @click="open = true" class="text-brand-600 hover:underline text-xs">voir plus</button></span>
+                            <span x-show="open" x-cloak>{!! nl2br(e($review->content)) !!} <button @click="open = false" class="text-brand-600 hover:underline text-xs">réduire</button></span>
+                        @else
+                            {{ $review->content }}
+                        @endif
+                        @if($review->photos)
+                            <div class="flex gap-1 mt-2">
+                                @foreach($review->photos as $photo)
+                                    <a href="{{ $photo }}" target="_blank">
+                                        <img src="{{ $photo }}" alt="" class="w-10 h-10 object-cover rounded border border-gray-200">
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     </td>
                     <td class="px-6 py-3 text-center">
                         <div class="flex items-center justify-center gap-0.5">

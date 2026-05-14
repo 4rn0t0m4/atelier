@@ -456,6 +456,15 @@ $breadcrumbJsonLd = json_encode([
                             <span class="text-xs text-gray-400">{{ $review->created_at->format('d/m/Y') }}</span>
                         </div>
                         <p class="text-sm text-gray-600 leading-relaxed">{{ $review->content }}</p>
+                        @if($review->photos)
+                            <div class="flex gap-2 mt-3">
+                                @foreach($review->photos as $photo)
+                                    <a href="{{ $photo }}" target="_blank">
+                                        <img src="{{ $photo }}" alt="Photo avis" class="w-20 h-20 object-cover rounded-lg border border-gray-200 hover:opacity-80 transition">
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -476,7 +485,7 @@ $breadcrumbJsonLd = json_encode([
                 </div>
             @endif
 
-            <form action="{{ route('shop.review.store', $product) }}" method="POST" class="space-y-4" data-turbo="false">
+            <form action="{{ route('shop.review.store', $product) }}" method="POST" enctype="multipart/form-data" class="space-y-4" data-turbo="false">
                 @csrf
                 {{-- Honeypot anti-spam --}}
                 <div aria-hidden="true" style="position:absolute;left:-9999px;">
@@ -519,6 +528,19 @@ $breadcrumbJsonLd = json_encode([
                     <textarea id="review_content" name="content" rows="4" required maxlength="2000"
                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">{{ old('content') }}</textarea>
                     @error('content') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                </div>
+                <div x-data="{ previews: [] }">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Photo <span class="text-xs text-gray-400 font-normal">(optionnel, 3 max)</span></label>
+                    <input type="file" name="photos[]" multiple accept="image/*"
+                           @change="previews = [...$el.files].slice(0, 3).map(f => URL.createObjectURL(f))"
+                           class="text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                    <div x-show="previews.length" class="flex gap-2 mt-2">
+                        <template x-for="src in previews" :key="src">
+                            <img :src="src" class="w-16 h-16 object-cover rounded-lg border border-gray-200">
+                        </template>
+                    </div>
+                    @error('photos') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+                    @error('photos.*') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
                 </div>
                 <button type="submit"
                         class="bg-brand-600 text-white px-6 py-2.5 rounded-lg font-medium text-sm hover:opacity-90 transition">

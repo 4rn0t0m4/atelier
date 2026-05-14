@@ -174,6 +174,8 @@ class ShopController extends Controller
             'author_email' => 'required|email|max:255',
             'rating' => 'required|integer|min:1|max:5',
             'content' => 'required|string|max:2000',
+            'photos' => 'nullable|array|max:3',
+            'photos.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $exists = ProductReview::where('product_id', $product->id)
@@ -184,6 +186,14 @@ class ShopController extends Controller
             return back()->with('review_error', 'Vous avez déjà laissé un avis pour ce produit.');
         }
 
+        $photos = [];
+        if ($request->hasFile('photos')) {
+            foreach (array_slice($request->file('photos'), 0, 3) as $file) {
+                $path = $file->store('reviews/' . date('Y/m'), 'public');
+                $photos[] = '/storage/' . $path;
+            }
+        }
+
         $user = auth()->user();
 
         ProductReview::create([
@@ -191,6 +201,7 @@ class ShopController extends Controller
             'product_id' => $product->id,
             'user_id' => $user?->id,
             'author_email' => strtolower($validated['author_email']),
+            'photos' => $photos ?: null,
         ]);
 
         return back()->with('review_success', 'Merci pour votre avis ! Il sera publié après validation.');
