@@ -136,11 +136,31 @@ class OrderController extends Controller
         $result = $boxtal->createShipment($order, $overrides);
 
         if ($result['success']) {
-            $updateData = ['boxtal_shipping_order_id' => $result['shipping_order_id']];
+            $updateData = [
+                'boxtal_shipping_order_id' => $result['shipping_order_id'],
+                'status' => 'shipped',
+                'shipped_at' => $order->shipped_at ?? now(),
+            ];
             if (! empty($result['label_url'])) {
                 $updateData['boxtal_label_url'] = $result['label_url'];
             }
+
+            // Récupérer le tracking si déjà disponible
+            $tracking = $boxtal->fetchTrackingV3($result['shipping_order_id']);
+            if ($tracking['tracking_number']) {
+                $updateData['tracking_number'] = $tracking['tracking_number'];
+                $updateData['tracking_url'] = $tracking['tracking_url'];
+                $updateData['tracking_carrier'] = BoxtalShippingService::carrierName($order);
+            }
+
             $order->update($updateData);
+
+            // Envoyer l'email d'expédition au client
+            try {
+                Mail::to($order->billing_email)->send(new OrderShipped($order));
+            } catch (\Throwable $e) {
+                Log::error("Email expédition #{$order->number} échoué", ['error' => $e->getMessage()]);
+            }
 
             $msg = 'Expédition Boxtal créée (ID : ' . $result['shipping_order_id'] . ').';
 
