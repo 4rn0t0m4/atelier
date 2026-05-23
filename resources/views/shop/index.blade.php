@@ -45,6 +45,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <h1 class="text-2xl font-semibold text-gray-900">
                 @if($currentCategory) {{ $currentCategory->name }}
+                @elseif($currentTag) {{ $currentTag->name }}
                 @else Boutique
                 @endif
             </h1>
