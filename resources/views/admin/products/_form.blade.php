@@ -361,7 +361,7 @@
 </div>
 
 @push('scripts')
-<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script src="https://cdn.tiny.cloud/1/khxr45cysz2o86h20c7n77rieusbudwsechz8j23zgq1sw6n/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const commonConfig = {
