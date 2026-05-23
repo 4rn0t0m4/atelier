@@ -200,6 +200,32 @@
             @endif
         </div>
 
+        {{-- Tags --}}
+        @php
+            $allTags = \App\Models\ProductTag::orderBy('name')->get();
+            $assignedTagIds = old('tags', $isEdit ? $product->tags->pluck('id')->toArray() : []);
+        @endphp
+        <div class="rounded-2xl border border-gray-200 bg-white p-5 space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-base font-semibold text-gray-800">Tags</h3>
+                <a href="{{ route('admin.tags.index') }}" class="text-xs text-brand-600 hover:text-brand-800">Gérer les tags →</a>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                @foreach($allTags as $tag)
+                    <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-sm cursor-pointer transition
+                        {{ in_array($tag->id, $assignedTagIds) ? 'border-brand-300 bg-brand-50 text-brand-700' : 'border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300' }}">
+                        <input type="checkbox" name="tags[]" value="{{ $tag->id }}"
+                               {{ in_array($tag->id, $assignedTagIds) ? 'checked' : '' }}
+                               class="sr-only peer">
+                        <span class="peer-checked:font-medium">{{ $tag->name }}</span>
+                    </label>
+                @endforeach
+            </div>
+            @if($allTags->isEmpty())
+                <p class="text-sm text-gray-400 italic">Aucun tag défini. <a href="{{ route('admin.tags.create') }}" class="text-brand-600 hover:underline">Créer un tag</a></p>
+            @endif
+        </div>
+
         {{-- SEO --}}
         <div class="rounded-2xl border border-gray-200 bg-white p-5 space-y-4">
             <h3 class="text-base font-semibold text-gray-800">SEO</h3>

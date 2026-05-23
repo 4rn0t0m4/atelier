@@ -26,6 +26,7 @@ class AdminMenuHelper
                         'subItems' => [
                             ['name' => 'Produits', 'path' => '/admin/produits'],
                             ['name' => 'Categories', 'path' => '/admin/categories'],
+                            ['name' => 'Tags', 'path' => '/admin/tags'],
                             ['name' => 'Options produit', 'path' => '/admin/options-produit'],
                         ],
                     ],

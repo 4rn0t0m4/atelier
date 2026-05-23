@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StatsController;
+use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\ReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -84,6 +85,14 @@ Route::post('categories', [CategoryController::class, 'store'])->name('admin.cat
 Route::get('categories/{category}/modifier', [CategoryController::class, 'edit'])->name('admin.categories.edit');
 Route::put('categories/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
 Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
+// Tags
+Route::get('tags', [TagController::class, 'index'])->name('admin.tags.index');
+Route::get('tags/nouveau', [TagController::class, 'create'])->name('admin.tags.create');
+Route::post('tags', [TagController::class, 'store'])->name('admin.tags.store');
+Route::get('tags/{tag}/modifier', [TagController::class, 'edit'])->name('admin.tags.edit');
+Route::put('tags/{tag}', [TagController::class, 'update'])->name('admin.tags.update');
+Route::delete('tags/{tag}', [TagController::class, 'destroy'])->name('admin.tags.destroy');
 
 // Clients
 Route::get('clients', [CustomerController::class, 'index'])->name('admin.customers.index');

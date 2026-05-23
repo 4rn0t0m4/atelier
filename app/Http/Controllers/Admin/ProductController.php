@@ -91,13 +91,14 @@ class ProductController extends Controller
         $product = Product::create($validated);
 
         $this->syncAddonGroups($product, $request->input('addon_groups', []));
+        $product->tags()->sync($request->input('tags', []));
 
         return redirect()->route('admin.products.index')->with('success', 'Produit cree avec succes.');
     }
 
     public function edit(Product $product)
     {
-        $product->load(['addonGroups', 'featuredImage']);
+        $product->load(['addonGroups', 'featuredImage', 'tags']);
         $categories = ProductCategory::with('children.children.children')->orderBy('sort_order')->orderBy('name')->get();
         $addonGroups = ProductAddonGroup::with('addons')->orderBy('sort_order')->get();
 
@@ -146,6 +147,7 @@ class ProductController extends Controller
         $product->update($validated);
 
         $this->syncAddonGroups($product, $request->input('addon_groups', []));
+        $product->tags()->sync($request->input('tags', []));
 
         return redirect()->route('admin.products.index')->with('success', 'Produit mis a jour.');
     }
