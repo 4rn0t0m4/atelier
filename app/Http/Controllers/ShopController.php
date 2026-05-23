@@ -114,15 +114,35 @@ class ShopController extends Controller
             $galleryImages = \App\Models\Media::whereIn('id', $ids)->get()->sortBy(fn ($m) => array_search($m->id, $ids))->values();
         }
 
-        // Produits similaires
-        $related = Product::with(['featuredImage', 'category.parent'])
-            ->withCount(['approvedReviews as reviews_count'])
-            ->withAvg('approvedReviews as reviews_avg', 'rating')
-            ->where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->active()
-            ->limit(4)
-            ->get();
+        // Produits similaires : même tags en priorité, puis même catégorie
+        $tagIds = $product->tags()->pluck('product_tags.id');
+        $related = collect();
+
+        if ($tagIds->isNotEmpty()) {
+            $related = Product::with(['featuredImage', 'category.parent'])
+                ->withCount(['approvedReviews as reviews_count'])
+                ->withAvg('approvedReviews as reviews_avg', 'rating')
+                ->whereHas('tags', fn ($q) => $q->whereIn('product_tags.id', $tagIds))
+                ->where('id', '!=', $product->id)
+                ->active()
+                ->inRandomOrder()
+                ->limit(4)
+                ->get();
+        }
+
+        if ($related->count() < 4) {
+            $excludeIds = $related->pluck('id')->push($product->id);
+            $complement = Product::with(['featuredImage', 'category.parent'])
+                ->withCount(['approvedReviews as reviews_count'])
+                ->withAvg('approvedReviews as reviews_avg', 'rating')
+                ->where('category_id', $product->category_id)
+                ->whereNotIn('id', $excludeIds)
+                ->active()
+                ->inRandomOrder()
+                ->limit(4 - $related->count())
+                ->get();
+            $related = $related->concat($complement);
+        }
 
         $reviews = $product->approvedReviews()->latest()->get();
 
