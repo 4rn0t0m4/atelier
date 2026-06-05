@@ -73,21 +73,37 @@
 
     {{-- Addresses --}}
     <div class="grid grid-cols-2 gap-4">
-        <div class="rounded-xl border border-gray-200 bg-white p-4">
-            <h3 class="text-xs font-semibold text-gray-800 mb-2 uppercase tracking-wide">Facturation</h3>
-            <div class="text-sm text-gray-600 space-y-0.5">
+        <div class="rounded-xl border border-gray-200 bg-white p-4" x-data>
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wide">Facturation</h3>
+                <button type="button" @click="
+                    navigator.clipboard.writeText($refs.billingAddr.innerText);
+                    $el.textContent = 'Copié !';
+                    setTimeout(() => $el.textContent = 'Copier', 1500);
+                " class="text-xs text-brand-600 hover:text-brand-800 transition">Copier</button>
+            </div>
+            <div x-ref="billingAddr" class="text-sm text-gray-600 space-y-0.5">
                 <p class="font-medium">{{ $order->billing_first_name }} {{ $order->billing_last_name }}</p>
                 <p>{{ $order->billing_address_1 }}</p>
                 @if($order->billing_address_2)<p>{{ $order->billing_address_2 }}</p>@endif
                 <p>{{ $order->billing_postcode }} {{ $order->billing_city }}</p>
                 <p>{{ $order->billing_country }}</p>
-                @if($order->billing_phone)<p class="pt-1">{{ $order->billing_phone }}</p>@endif
-                <p class="pt-1 text-brand-600">{{ $order->billing_email }}</p>
             </div>
+            @if($order->billing_phone)<p class="text-sm text-gray-600 pt-1">{{ $order->billing_phone }}</p>@endif
+            <p class="text-sm pt-1 text-brand-600">{{ $order->billing_email }}</p>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-4">
-            <h3 class="text-xs font-semibold text-gray-800 mb-2 uppercase tracking-wide">Livraison</h3>
-            <div class="text-sm text-gray-600 space-y-0.5">
+        <div class="rounded-xl border border-gray-200 bg-white p-4" x-data>
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wide">Livraison</h3>
+                @if($order->shipping_address_1)
+                    <button type="button" @click="
+                        navigator.clipboard.writeText($refs.shippingAddr.innerText);
+                        $el.textContent = 'Copié !';
+                        setTimeout(() => $el.textContent = 'Copier', 1500);
+                    " class="text-xs text-brand-600 hover:text-brand-800 transition">Copier</button>
+                @endif
+            </div>
+            <div x-ref="shippingAddr" class="text-sm text-gray-600 space-y-0.5">
                 @if($order->shipping_address_1)
                     <p class="font-medium">{{ $order->shipping_first_name }} {{ $order->shipping_last_name }}</p>
                     <p>{{ $order->shipping_address_1 }}</p>
