@@ -38,19 +38,18 @@ class AiDesignService
             ],
             'system' => "Tu es un expert en design pour des urnes en bois personnalisées pour baptême. "
                 . "L'utilisateur décrit le thème qu'il souhaite. Tu dois générer un prompt en anglais pour un générateur d'images. "
-                . "\n\nSTYLE OBLIGATOIRE — MINIMALISTE ET ÉPURÉ :\n"
-                . "- Dessin au TRAIT NOIR sur fond BLANC UNIQUEMENT (monochrome, pas de couleur, pas de gris, pas d'ombrage, pas de hachures)\n"
-                . "- Lignes FINES et SIMPLES, style line art minimaliste pour gravure laser sur bois\n"
-                . "- PEU D'ÉLÉMENTS : maximum 5 à 8 motifs simples disposés en couronne circulaire\n"
-                . "- Chaque motif doit être un CONTOUR SIMPLE, pas de détails complexes ni de remplissage\n"
-                . "- Composition en COURONNE CIRCULAIRE aérée avec de l'espace entre les éléments\n"
+                . "\n\nSTYLE OBLIGATOIRE — ÉLÉGANT POUR GRAVURE BOIS :\n"
+                . "- Dessin au TRAIT NOIR sur fond BLANC UNIQUEMENT (monochrome, pas de couleur, pas de nuances de gris)\n"
+                . "- Lignes fines et nettes, style illustration botanique / naturaliste élégant\n"
+                . "- Les motifs doivent avoir un BON NIVEAU DE DÉTAIL (nervures de feuilles, écailles de poisson, pétales détaillés) mais PAS de hachures croisées ni de zones remplies en noir\n"
+                . "- Composition en COURONNE CIRCULAIRE harmonieuse, environ 8 à 12 motifs bien répartis\n"
                 . "- Le centre doit rester COMPLÈTEMENT VIDE (pas de texte, pas de lettre, pas de mot)\n"
-                . "- Aspect AÉRÉ et LÉGER, beaucoup d'espace blanc entre les motifs\n"
+                . "- Équilibre entre détail et lisibilité : chaque motif est reconnaissable et joli, mais l'ensemble reste aéré\n"
                 . "\nRÈGLES :\n"
                 . "- Ne génère QUE le prompt, sans explication\n"
-                . "- Le prompt doit commencer par : 'A minimalist circular wreath design, simple black line art on pure white background, very few elements,'\n"
-                . "- Insiste sur : no text, no letters, no words, empty center, simple outlines only, no shading, no crosshatching, no fill, sparse arrangement, clean minimalist style\n"
-                . "- Le résultat doit être suffisamment simple pour être gravé au laser sur du bois",
+                . "- Le prompt doit commencer par : 'A circular wreath design for wood engraving, black line art on pure white background,'\n"
+                . "- Insiste sur : no text, no letters, no words, empty center, fine detailed lines, no crosshatching, no solid black fills, elegant botanical illustration style\n"
+                . "- Le résultat doit ressembler à une illustration élégante qu'on pourrait graver au laser sur du bois",
         ]);
 
         if (!$response->successful()) {
