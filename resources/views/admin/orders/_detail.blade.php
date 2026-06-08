@@ -73,48 +73,66 @@
 
     {{-- Addresses --}}
     <div class="grid grid-cols-2 gap-4">
+        @php
+            $billingCopy = implode("\n", array_filter([
+                mb_strtoupper($order->billing_last_name) . ' ' . ucfirst(mb_strtolower($order->billing_first_name)),
+                $order->billing_address_1,
+                $order->billing_address_2,
+                $order->billing_postcode . ' ' . $order->billing_city,
+                $order->billing_country,
+            ]));
+        @endphp
         <div class="rounded-xl border border-gray-200 bg-white p-4" x-data>
             <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wide">Facturation</h3>
-                <button type="button" @click="
-                    navigator.clipboard.writeText($refs.billingAddr.innerText);
+                <button type="button" data-copy="{{ $billingCopy }}" @click="
+                    navigator.clipboard.writeText($el.dataset.copy);
                     $el.textContent = 'Copié !';
                     setTimeout(() => $el.textContent = 'Copier', 1500);
                 " class="text-xs text-brand-600 hover:text-brand-800 transition">Copier</button>
             </div>
-            <div x-ref="billingAddr" class="text-sm text-gray-600 space-y-0.5">
-                <p class="font-medium">{{ $order->billing_first_name }} {{ $order->billing_last_name }}</p>
-                <p>{{ $order->billing_address_1 }}</p>
-                @if($order->billing_address_2)<p>{{ $order->billing_address_2 }}</p>@endif
-                <p>{{ $order->billing_postcode }} {{ $order->billing_city }}</p>
-                <p>{{ $order->billing_country }}</p>
+            <div class="text-sm text-gray-600 leading-snug">
+                <span class="font-medium">{{ mb_strtoupper($order->billing_last_name) }} {{ ucfirst(mb_strtolower($order->billing_first_name)) }}</span><br>
+                {{ $order->billing_address_1 }}<br>
+                @if($order->billing_address_2){{ $order->billing_address_2 }}<br>@endif
+                {{ $order->billing_postcode }} {{ $order->billing_city }}<br>
+                {{ $order->billing_country }}
             </div>
             @if($order->billing_phone)<p class="text-sm text-gray-600 pt-1">{{ $order->billing_phone }}</p>@endif
             <p class="text-sm pt-1 text-brand-600">{{ $order->billing_email }}</p>
         </div>
+        @php
+            $shippingCopy = $order->shipping_address_1 ? implode("\n", array_filter([
+                mb_strtoupper($order->shipping_last_name) . ' ' . ucfirst(mb_strtolower($order->shipping_first_name)),
+                $order->shipping_address_1,
+                $order->shipping_address_2,
+                $order->shipping_postcode . ' ' . $order->shipping_city,
+                $order->shipping_country,
+            ])) : $billingCopy;
+        @endphp
         <div class="rounded-xl border border-gray-200 bg-white p-4" x-data>
             <div class="flex items-center justify-between mb-2">
                 <h3 class="text-xs font-semibold text-gray-800 uppercase tracking-wide">Livraison</h3>
                 @if($order->shipping_address_1)
-                    <button type="button" @click="
-                        navigator.clipboard.writeText($refs.shippingAddr.innerText);
+                    <button type="button" data-copy="{{ $shippingCopy }}" @click="
+                        navigator.clipboard.writeText($el.dataset.copy);
                         $el.textContent = 'Copié !';
                         setTimeout(() => $el.textContent = 'Copier', 1500);
                     " class="text-xs text-brand-600 hover:text-brand-800 transition">Copier</button>
                 @endif
             </div>
-            <div x-ref="shippingAddr" class="text-sm text-gray-600 space-y-0.5">
+            <div class="text-sm text-gray-600 leading-snug">
                 @if($order->shipping_address_1)
-                    <p class="font-medium">{{ $order->shipping_first_name }} {{ $order->shipping_last_name }}</p>
-                    <p>{{ $order->shipping_address_1 }}</p>
-                    @if($order->shipping_address_2)<p>{{ $order->shipping_address_2 }}</p>@endif
-                    <p>{{ $order->shipping_postcode }} {{ $order->shipping_city }}</p>
-                    <p>{{ $order->shipping_country }}</p>
+                    <span class="font-medium">{{ mb_strtoupper($order->shipping_last_name) }} {{ ucfirst(mb_strtolower($order->shipping_first_name)) }}</span><br>
+                    {{ $order->shipping_address_1 }}<br>
+                    @if($order->shipping_address_2){{ $order->shipping_address_2 }}<br>@endif
+                    {{ $order->shipping_postcode }} {{ $order->shipping_city }}<br>
+                    {{ $order->shipping_country }}
                 @else
-                    <p class="text-gray-400 italic">Identique à la facturation</p>
+                    <span class="text-gray-400 italic">Identique à la facturation</span>
                 @endif
                 @if($order->relay_point_code)
-                    <p class="pt-1 text-brand-600 font-medium">Relais : {{ $order->relay_point_code }}</p>
+                    <br><span class="text-brand-600 font-medium">Relais : {{ $order->relay_point_code }}</span>
                 @endif
             </div>
         </div>
