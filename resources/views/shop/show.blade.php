@@ -336,14 +336,14 @@ $breadcrumbJsonLd = json_encode([
                                       class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"></textarea>
                             <div class="flex items-center justify-between mt-1">
                                 <span class="text-xs text-gray-400" x-text="description.length + '/500'"></span>
-                                <span class="text-xs text-gray-400" x-show="remaining >= 0" x-text="(remaining + 1) + ' essai(s) restant(s)'"></span>
+                                <span class="text-xs text-brand-500" x-show="remaining > 0" x-text="remaining + ' essai(s) restant(s)'"></span>
                             </div>
                         </div>
 
                         <button type="button" @click="generate()"
-                                :disabled="loading || !description.trim() || remaining < 0"
+                                :disabled="loading || !description.trim() || remaining <= 0"
                                 class="w-full py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
-                                :class="loading || !description.trim() || remaining < 0
+                                :class="loading || !description.trim() || remaining <= 0
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                     : 'bg-brand-600 text-white hover:bg-brand-700'">
                             <svg x-show="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -642,7 +642,7 @@ function aiDesign(productId, supplementPrice) {
         selectedImage: '',
         loading: false,
         error: '',
-        remaining: 2,
+        remaining: 3,
 
         async generate() {
             this.loading = true;

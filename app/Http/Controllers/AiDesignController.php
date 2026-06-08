@@ -35,10 +35,14 @@ class AiDesignController extends Controller
 
             return response()->json([
                 'image_url' => $result['image_url'],
-                'remaining' => 2 - $count,
+                'remaining' => 3 - ($count + 1),
             ]);
         } catch (\RuntimeException $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            report($e);
+
+            return response()->json([
+                'error' => 'La génération a échoué. Veuillez réessayer.',
+            ], 500);
         }
     }
 }

@@ -12,9 +12,7 @@ class AiDesignService
     {
         $imagePrompt = $this->buildImagePrompt($description);
 
-        $imageUrl = $this->generateImage($imagePrompt);
-
-        $localPath = $this->downloadImage($imageUrl);
+        $localPath = $this->generateImage($imagePrompt);
 
         return [
             'image_url' => Storage::url($localPath),
@@ -29,7 +27,7 @@ class AiDesignService
             'x-api-key' => config('services.anthropic.api_key'),
             'anthropic-version' => '2023-06-01',
             'content-type' => 'application/json',
-        ])->post('https://api.anthropic.com/v1/messages', [
+        ])->timeout(30)->post('https://api.anthropic.com/v1/messages', [
             'model' => 'claude-sonnet-4-20250514',
             'max_tokens' => 300,
             'messages' => [
@@ -73,24 +71,28 @@ class AiDesignService
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . config('services.openai.api_key'),
             'content-type' => 'application/json',
-        ])->post('https://api.openai.com/v1/images/generations', [
-            'model' => 'dall-e-3',
+        ])->timeout(60)->post('https://api.openai.com/v1/images/generations', [
+            'model' => 'gpt-image-1',
             'prompt' => $prompt,
             'n' => 1,
             'size' => '1024x1024',
-            'quality' => 'standard',
+            'quality' => 'medium',
         ]);
 
         if (!$response->successful()) {
-            throw new \RuntimeException('Erreur API DALL-E : ' . $response->body());
+            throw new \RuntimeException('Erreur API OpenAI : ' . $response->body());
         }
 
-        return $response->json('data.0.url');
+        $b64 = $response->json('data.0.b64_json');
+        if (!$b64) {
+            throw new \RuntimeException('Aucune image générée par l\'API.');
+        }
+
+        return $this->saveImage(base64_decode($b64));
     }
 
-    private function downloadImage(string $url): string
+    private function saveImage(string $contents): string
     {
-        $contents = Http::get($url)->body();
         $path = 'ai-designs/' . date('Y/m') . '/' . Str::uuid() . '.png';
 
         Storage::disk('public')->put($path, $contents);
