@@ -41,4 +41,12 @@ return [
         'mode' => env('PAYPAL_MODE', 'sandbox'), // sandbox ou live
     ],
 
+    'anthropic' => [
+        'api_key' => env('ANTHROPIC_API_KEY'),
+    ],
+
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+    ],
+
 ];

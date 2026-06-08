@@ -18,7 +18,7 @@ class CartService
      * Ajoute ou incrémente un article.
      * Clé unique : product_id + md5(serialized_addons)
      */
-    public function add(Product $product, int $quantity = 1, array $addons = []): string
+    public function add(Product $product, int $quantity = 1, array $addons = [], ?array $aiDesign = null): string
     {
         $cart = $this->all();
 
@@ -27,8 +27,9 @@ class CartService
         // Si un addon a sync_qty, forcer la quantité au nombre de lignes
         $quantity = $this->applySyncQty($addons, $quantity);
 
-        // Clé unique par produit + combinaison d'addons
-        $key = $product->id . '-' . md5(serialize($sanitizedAddons));
+        // Clé unique par produit + combinaison d'addons + design IA
+        $aiHash = $aiDesign ? md5($aiDesign['image_url']) : '';
+        $key = $product->id . '-' . md5(serialize($sanitizedAddons) . $aiHash);
 
         $hasSyncQty = ProductAddon::whereIn('id', array_keys($addons))
             ->where('sync_qty', true)
@@ -46,10 +47,11 @@ class CartService
                 'name' => $product->name,
                 'slug' => $product->slug,
                 'price' => $product->effective_price,
-                'addon_price_flat' => $addonCalc['flat'],
+                'addon_price_flat' => $addonCalc['flat'] + ($aiDesign['supplement'] ?? 0),
                 'addon_price_per_unit' => $addonCalc['per_unit'],
                 'quantity' => $quantity,
                 'addons' => $sanitizedAddons,
+                'ai_design' => $aiDesign,
                 'image' => $product->featuredImage?->url,
             ];
         }

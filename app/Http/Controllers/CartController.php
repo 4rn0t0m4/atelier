@@ -52,7 +52,15 @@ class CartController extends Controller
         $quantity = (int) $request->input('quantity', 1);
         $addons = $request->input('addons', []);
 
-        $this->cart->add($product, $quantity, $addons);
+        $aiDesign = null;
+        if ($request->filled('ai_design_image') && $product->ai_personalization) {
+            $aiDesign = [
+                'image_url' => $request->input('ai_design_image'),
+                'supplement' => (float) $product->ai_supplement_price,
+            ];
+        }
+
+        $this->cart->add($product, $quantity, $addons, $aiDesign);
 
         if ($request->wantsTurboStream()) {
             return response()->turboStream([

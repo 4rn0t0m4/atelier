@@ -159,7 +159,14 @@ class OrderService
                     }
                 }
 
-                // Stock décrémenté après paiement (webhook / page success)
+                if (! empty($item['ai_design'])) {
+                    $orderItem->addons()->create([
+                        'addon_label' => 'Thème IA personnalisé',
+                        'addon_value' => $item['ai_design']['image_url'],
+                        'addon_price' => $item['ai_design']['supplement'] ?? 0,
+                        'addon_price_type' => 'flat_fee',
+                    ]);
+                }
             }
 
             return $order;

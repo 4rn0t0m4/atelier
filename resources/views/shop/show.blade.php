@@ -316,6 +316,69 @@ $breadcrumbJsonLd = json_encode([
                     @endif
                 @endif
 
+                {{-- Personnalisation IA --}}
+                @if($product->ai_personalization)
+                    <div class="rounded-xl border border-brand-200 bg-brand-50/30 p-4 space-y-3"
+                         x-data="aiDesign({{ $product->id }}, {{ $product->ai_supplement_price ?? 5 }})">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z"/>
+                            </svg>
+                            <h3 class="text-sm font-semibold text-brand-700">Personnalisation IA</h3>
+                            <span class="text-xs text-brand-500">(+ {{ number_format($product->ai_supplement_price ?? 5, 2, ',', ' ') }} €)</span>
+                        </div>
+
+                        <p class="text-xs text-gray-600">Décrivez le thème souhaité et notre IA vous proposera un visuel personnalisé.</p>
+
+                        <div>
+                            <textarea x-model="description" rows="3" maxlength="500"
+                                      placeholder="Ex : Thème nature avec des feuilles d'eucalyptus, des papillons, tons pastel rose et vert..."
+                                      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"></textarea>
+                            <div class="flex items-center justify-between mt-1">
+                                <span class="text-xs text-gray-400" x-text="description.length + '/500'"></span>
+                                <span class="text-xs text-gray-400" x-show="remaining >= 0" x-text="(remaining + 1) + ' essai(s) restant(s)'"></span>
+                            </div>
+                        </div>
+
+                        <button type="button" @click="generate()"
+                                :disabled="loading || !description.trim() || remaining < 0"
+                                class="w-full py-2.5 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+                                :class="loading || !description.trim() || remaining < 0
+                                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                    : 'bg-brand-600 text-white hover:bg-brand-700'">
+                            <svg x-show="loading" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span x-text="loading ? 'Création en cours... (30s environ)' : 'Générer un thème'"></span>
+                        </button>
+
+                        <div x-show="error" x-cloak class="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2" x-text="error"></div>
+
+                        {{-- Résultats --}}
+                        <div x-show="designs.length > 0" x-cloak class="space-y-3">
+                            <p class="text-xs font-medium text-gray-700">Choisissez votre thème :</p>
+                            <div class="grid gap-2" :class="designs.length > 1 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1 max-w-xs'">
+                                <template x-for="(design, index) in designs" :key="index">
+                                    <button type="button" @click="select(index)"
+                                            class="rounded-xl overflow-hidden border-2 transition relative"
+                                            :class="selectedIndex === index ? 'border-brand-600 ring-2 ring-brand-200' : 'border-gray-200 hover:border-brand-300'">
+                                        <img :src="design.image_url" alt="Thème IA" class="w-full aspect-square object-cover">
+                                        <div x-show="selectedIndex === index"
+                                             class="absolute top-2 right-2 w-6 h-6 bg-brand-600 rounded-full flex items-center justify-center">
+                                            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="ai_design_image" :value="selectedImage">
+                    </div>
+                @endif
+
                 {{-- Quantite + bouton --}}
                 <div class="flex items-center gap-4 pt-2">
                     <div class="flex items-center rounded-xl overflow-hidden border border-brand-200" :class="syncQty && 'opacity-50'">
@@ -566,6 +629,63 @@ $breadcrumbJsonLd = json_encode([
         </div>
     </div>
 </section>
+@endif
+
+{{-- AI Design Alpine component --}}
+@if($product->ai_personalization)
+<script>
+function aiDesign(productId, supplementPrice) {
+    return {
+        description: '',
+        designs: [],
+        selectedIndex: -1,
+        selectedImage: '',
+        loading: false,
+        error: '',
+        remaining: 2,
+
+        async generate() {
+            this.loading = true;
+            this.error = '';
+
+            try {
+                const res = await fetch('{{ route("ai-design.generate") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        description: this.description,
+                        product_id: productId,
+                    }),
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    this.error = data.error || 'Une erreur est survenue.';
+                    return;
+                }
+
+                this.designs.push({ image_url: data.image_url });
+                this.remaining = data.remaining;
+                this.select(this.designs.length - 1);
+            } catch (e) {
+                this.error = 'Erreur de connexion. Veuillez réessayer.';
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        select(index) {
+            this.selectedIndex = index;
+            this.selectedImage = this.designs[index]?.image_url || '';
+        }
+    };
+}
+</script>
 @endif
 
 {{-- GA4 view_item --}}

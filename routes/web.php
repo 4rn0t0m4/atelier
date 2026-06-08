@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoxtalController;
 use App\Http\Controllers\BoxtalWebhookController;
+use App\Http\Controllers\AiDesignController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
@@ -50,6 +51,9 @@ Route::post('/api/boxtal/webhook', [BoxtalWebhookController::class, 'handle'])->
 Route::post('/api/paypal/create-order', [PayPalController::class, 'createOrder'])->name('paypal.create-order');
 Route::post('/api/paypal/capture-order', [PayPalController::class, 'captureOrder'])->name('paypal.capture-order');
 Route::post('/api/paypal/log-error', [PayPalController::class, 'logError'])->name('paypal.log-error');
+
+// IA Design
+Route::post('/api/ai-design/generate', [AiDesignController::class, 'generate'])->name('ai-design.generate')->middleware('throttle:6,1');
 
 // Authentification (guest)
 Route::middleware('guest')->group(function () {

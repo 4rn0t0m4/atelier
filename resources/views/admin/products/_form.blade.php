@@ -93,6 +93,22 @@
                        class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
                 Produit léger (livraison à domicile à {{ number_format(config('shipping.methods.colissimo.light_price', 3.50), 2, ',', ' ') }} €)
             </label>
+
+            <div x-data="{ aiEnabled: {{ old('ai_personalization', $product->ai_personalization ?? false) ? 'true' : 'false' }} }" class="space-y-2 pt-2 border-t border-gray-100">
+                <label class="flex items-center gap-2 text-sm text-gray-600">
+                    <input type="hidden" name="ai_personalization" value="0">
+                    <input type="checkbox" name="ai_personalization" value="1" x-model="aiEnabled"
+                           {{ old('ai_personalization', $product->ai_personalization ?? false) ? 'checked' : '' }}
+                           class="rounded border-gray-300 text-brand-600 focus:ring-brand-500">
+                    Personnalisation IA (génération de thème par intelligence artificielle)
+                </label>
+                <div x-show="aiEnabled" x-cloak class="ml-6">
+                    <label class="block text-sm text-gray-600 mb-1">Supplément IA (€)</label>
+                    <input type="number" name="ai_supplement_price" step="0.01" min="0"
+                           value="{{ old('ai_supplement_price', $product->ai_supplement_price ?? '5.00') }}"
+                           class="w-32 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                </div>
+            </div>
         </div>
 
         {{-- Addon groups --}}
