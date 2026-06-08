@@ -37,26 +37,20 @@ class AiDesignService
                 ],
             ],
             'system' => "Tu es un expert en design pour des urnes en bois personnalisées pour baptême. "
-                . "L'utilisateur décrit le thème qu'il souhaite. Tu dois générer un prompt DALL-E en anglais. "
-                . "\n\nSTYLE OBLIGATOIRE (inspire-toi des thèmes existants) :\n"
-                . "- Dessin au TRAIT NOIR sur fond BLANC UNIQUEMENT (monochrome, pas de couleur, pas de nuances de gris, pas d'ombrage)\n"
-                . "- Lignes fines et délicates, style gravure sur bois\n"
-                . "- Composition en COURONNE CIRCULAIRE ou cadre géométrique (hexagone) entourant un espace vide au centre pour le texte\n"
-                . "- Le centre doit rester VIDE (pas de texte, pas de lettre, pas de mot)\n"
-                . "\nTHÈMES EXISTANTS comme référence :\n"
-                . "1. Couronne de fleurs des champs sauvages (coquelicots, marguerites)\n"
-                . "2. Cadre hexagonal minimaliste avec feuillage et étoiles\n"
-                . "3. Cadre hexagonal avec roses détaillées et feuilles\n"
-                . "4. Couronne de roses et anémones, style élégant\n"
-                . "5. Couronne avec animaux mignons (panda, lion) et motifs espace/planètes\n"
-                . "6. Couronne avec oursons en peluche, nuages, étoiles, montgolfière\n"
-                . "7. Couronne de feuilles tropicales (monstera) avec dinosaure\n"
-                . "8. Couronne avec animaux de la forêt (renard, hibou, biche, écureuil)\n"
+                . "L'utilisateur décrit le thème qu'il souhaite. Tu dois générer un prompt en anglais pour un générateur d'images. "
+                . "\n\nSTYLE OBLIGATOIRE — MINIMALISTE ET ÉPURÉ :\n"
+                . "- Dessin au TRAIT NOIR sur fond BLANC UNIQUEMENT (monochrome, pas de couleur, pas de gris, pas d'ombrage, pas de hachures)\n"
+                . "- Lignes FINES et SIMPLES, style line art minimaliste pour gravure laser sur bois\n"
+                . "- PEU D'ÉLÉMENTS : maximum 5 à 8 motifs simples disposés en couronne circulaire\n"
+                . "- Chaque motif doit être un CONTOUR SIMPLE, pas de détails complexes ni de remplissage\n"
+                . "- Composition en COURONNE CIRCULAIRE aérée avec de l'espace entre les éléments\n"
+                . "- Le centre doit rester COMPLÈTEMENT VIDE (pas de texte, pas de lettre, pas de mot)\n"
+                . "- Aspect AÉRÉ et LÉGER, beaucoup d'espace blanc entre les motifs\n"
                 . "\nRÈGLES :\n"
-                . "- Ne génère QUE le prompt DALL-E, sans explication\n"
-                . "- Le prompt doit commencer par : 'A circular wreath design for wood engraving, black line art on pure white background,'\n"
-                . "- Insiste sur : no text, no letters, no words, empty center, thin delicate lines, black ink style\n"
-                . "- Le résultat doit ressembler à un dessin qu'on pourrait graver au laser sur du bois",
+                . "- Ne génère QUE le prompt, sans explication\n"
+                . "- Le prompt doit commencer par : 'A minimalist circular wreath design, simple black line art on pure white background, very few elements,'\n"
+                . "- Insiste sur : no text, no letters, no words, empty center, simple outlines only, no shading, no crosshatching, no fill, sparse arrangement, clean minimalist style\n"
+                . "- Le résultat doit être suffisamment simple pour être gravé au laser sur du bois",
         ]);
 
         if (!$response->successful()) {
