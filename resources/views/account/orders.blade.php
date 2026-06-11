@@ -36,7 +36,13 @@
                                 @include('account.partials.order-status', ['status' => $order->status])
                             </td>
                             <td class="px-4 py-3 text-right">{{ number_format($order->total, 2, ',', ' ') }} €</td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="px-4 py-3 text-right whitespace-nowrap">
+                                @if(in_array($order->status, ['pending', 'failed']))
+                                    <form action="{{ route('account.order.pay', $order) }}" method="POST" class="inline">
+                                        @csrf
+                                        <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded-md hover:bg-brand-700 transition mr-1">Régler</button>
+                                    </form>
+                                @endif
                                 <a href="{{ route('account.order', $order) }}"
                                    class="text-xs text-brand-700 hover:underline">Détails</a>
                             </td>

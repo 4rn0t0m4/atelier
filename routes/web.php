@@ -75,6 +75,7 @@ Route::prefix('/mon-compte')->name('account.')->middleware('auth')->group(functi
     Route::get('/', [AccountController::class, 'index'])->name('index');
     Route::get('/commandes', [AccountController::class, 'orders'])->name('orders');
     Route::get('/commandes/{order}', [AccountController::class, 'order'])->name('order');
+    Route::post('/commandes/{order}/payer', [AccountController::class, 'retryPayment'])->name('order.pay');
     Route::get('/profil', [AccountController::class, 'editProfile'])->name('profile');
     Route::patch('/profil', [AccountController::class, 'updateProfile'])->name('profile.update');
     Route::patch('/mot-de-passe', [AccountController::class, 'updatePassword'])->name('password.update');

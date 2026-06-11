@@ -8,6 +8,23 @@
         @include('account.partials.order-status', ['status' => $order->status])
     </div>
 
+    {{-- Bouton paiement --}}
+    @if(in_array($order->status, ['pending', 'failed']))
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-6 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-amber-800">Cette commande n'a pas encore été réglée.</p>
+                <p class="text-xs text-amber-600 mt-0.5">Montant : {{ number_format($order->total, 2, ',', ' ') }} €</p>
+            </div>
+            <form action="{{ route('account.order.pay', $order) }}" method="POST">
+                @csrf
+                <button type="submit"
+                        class="bg-brand-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-700 transition">
+                    Régler ma commande
+                </button>
+            </form>
+        </div>
+    @endif
+
     {{-- Articles --}}
     <section class="bg-white border border-brand-100 rounded-xl overflow-hidden mb-6">
         <h2 class="text-sm font-semibold text-gray-700 px-5 py-4 border-b border-brand-100">Articles</h2>
