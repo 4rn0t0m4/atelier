@@ -38,7 +38,7 @@
                             <td class="px-4 py-3 text-right">{{ number_format($order->total, 2, ',', ' ') }} €</td>
                             <td class="px-4 py-3 text-right whitespace-nowrap">
                                 @if(in_array($order->status, ['pending', 'failed']))
-                                    <form action="{{ route('account.order.pay', $order) }}" method="POST" class="inline">
+                                    <form action="{{ route('account.order.pay', $order) }}" method="POST" class="inline" data-turbo="false">
                                         @csrf
                                         <button type="submit" class="text-xs bg-brand-600 text-white px-3 py-1 rounded-md hover:bg-brand-700 transition mr-1">Régler</button>
                                     </form>

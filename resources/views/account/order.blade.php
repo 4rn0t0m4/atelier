@@ -15,7 +15,7 @@
                 <p class="text-sm font-medium text-amber-800">Cette commande n'a pas encore été réglée.</p>
                 <p class="text-xs text-amber-600 mt-0.5">Montant : {{ number_format($order->total, 2, ',', ' ') }} €</p>
             </div>
-            <form action="{{ route('account.order.pay', $order) }}" method="POST">
+            <form action="{{ route('account.order.pay', $order) }}" method="POST" data-turbo="false">
                 @csrf
                 <button type="submit"
                         class="bg-brand-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-brand-700 transition">
