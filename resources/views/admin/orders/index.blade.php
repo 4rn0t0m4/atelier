@@ -138,7 +138,7 @@
         </div>
 
         {{-- Slide-over panel --}}
-        <div x-show="open_" x-cloak class="fixed inset-0 z-40" style="display:none">
+        <div x-show="open_" x-cloak class="fixed inset-0 z-[99999]" style="display:none">
             {{-- Overlay --}}
             <div x-show="open_"
                  x-transition:enter="transition ease-out duration-200"
