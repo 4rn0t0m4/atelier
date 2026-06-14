@@ -161,9 +161,15 @@
                  class="absolute right-0 top-0 bottom-0 w-full max-w-2xl bg-gray-50 shadow-2xl border-l border-gray-200 flex flex-col">
 
                 {{-- Panel header --}}
-                <div class="flex items-center justify-between px-5 py-3 border-b border-gray-200 bg-white shrink-0">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white shrink-0">
+                    <button @click="close()" class="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition lg:hidden">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                        Retour
+                    </button>
                     <h2 class="text-sm font-semibold text-gray-800">Détail commande</h2>
-                    <button @click="close()" class="p-1 rounded-lg hover:bg-gray-100 transition text-gray-400 hover:text-gray-600">
+                    <button @click="close()" class="hidden lg:flex p-1.5 rounded-lg hover:bg-gray-100 transition text-gray-400 hover:text-gray-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                         </svg>
