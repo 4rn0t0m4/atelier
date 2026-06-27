@@ -82,15 +82,15 @@
 </head>
 <body class="bg-white text-gray-900 font-sans antialiased" x-data>
 
+    {{-- Header --}}
+    @include('partials.header')
+
     {{-- Bannière fermeture estivale --}}
     @if(now()->lte('2026-07-19 23:59:59'))
-        <div class="bg-brand-800 text-white text-center px-4 py-3 text-sm">
+        <div class="text-center px-4 py-3 text-sm font-medium" style="background-color: #3e2a10; color: #fff;">
             L'Atelier est fermé du 4 au 18 juillet. Les commandes passées pendant cette période seront traitées dès notre retour.
         </div>
     @endif
-
-    {{-- Header --}}
-    @include('partials.header')
 
     {{-- Contenu principal --}}
     <main id="main-content" class="min-h-screen">
