@@ -80,7 +80,7 @@
             @if(!$inStock)
                 <span class="text-xs px-2.5 py-1 rounded-lg text-white bg-gray-400 opacity-50">Epuise</span>
             @else
-                <a href="{{ $product->url() }}"
+                <a href="{{ $product->url() }}" data-turbo-frame="_top"
                    class="text-xs px-2.5 py-1 rounded-lg text-white bg-brand-600 hover:opacity-90 transition">
                     Choisir
                 </a>
