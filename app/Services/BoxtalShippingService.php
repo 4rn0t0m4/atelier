@@ -160,13 +160,22 @@ class BoxtalShippingService
     private function resolveOfferCode(Order $order): string
     {
         $offers = config('shipping.boxtal.shipping_offer_codes');
+        $country = $order->shipping_country ?: $order->billing_country ?: 'FR';
+        $isInternational = $country !== 'FR';
 
-        if ($order->relay_network && isset($offers[$order->relay_network])) {
-            return $offers[$order->relay_network];
+        if ($order->relay_network) {
+            $intlKey = $order->relay_network . '_INTL';
+            if ($isInternational && isset($offers[$intlKey])) {
+                return $offers[$intlKey];
+            }
+            if (isset($offers[$order->relay_network])) {
+                return $offers[$order->relay_network];
+            }
         }
 
-        if ($order->shipping_key === 'colissimo' && isset($offers['colissimo'])) {
-            return $offers['colissimo'];
+        if ($order->shipping_key === 'colissimo') {
+            $key = $isInternational ? 'colissimo_intl' : 'colissimo';
+            return $offers[$key] ?? $offers['colissimo'] ?? 'POFR-ColissimoAccess';
         }
 
         return $offers['MONR_NETWORK'] ?? 'MONR-CpourToi';

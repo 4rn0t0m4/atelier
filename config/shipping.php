@@ -121,8 +121,11 @@ return [
 
         'shipping_offer_codes' => [
             'MONR_NETWORK' => env('BOXTAL_OFFER_MONR', 'MONR-CpourToi'),
+            'MONR_NETWORK_INTL' => env('BOXTAL_OFFER_MONR_INTL', 'MONR-CpourToiEurope'),
             'CHRP_NETWORK' => env('BOXTAL_OFFER_CHRP', 'CHRP-Chrono2ShopDirect'),
+            'CHRP_NETWORK_INTL' => env('BOXTAL_OFFER_CHRP_INTL', 'CHRP-Chrono2ShopEurope'),
             'colissimo' => env('BOXTAL_OFFER_COLISSIMO', 'POFR-ColissimoAccess'),
+            'colissimo_intl' => env('BOXTAL_OFFER_COLISSIMO_INTL', 'POFR-ColissimoInternational'),
         ],
     ],
 ];
