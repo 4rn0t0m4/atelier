@@ -11,7 +11,7 @@
         .header p { color: #fde68a; margin: 8px 0 0; font-size: 14px; }
         .content { padding: 30px; }
         .product-name { font-size: 18px; font-weight: 600; color: #92400e; }
-        .btn { display: inline-block; background: #92400e; color: white; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; }
+        .btn { display: inline-block; background: #92400e; color: #ffffff !important; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; }
         .footer { text-align: center; padding: 20px 30px; background: #f9fafb; font-size: 12px; color: #9ca3af; }
         .footer a { color: #92400e; }
     </style>
@@ -31,7 +31,7 @@
         <p>N'attendez pas trop, les stocks sont limités !</p>
 
         <p style="text-align: center; margin: 30px 0;">
-            <a href="{{ url($product->url()) }}" class="btn">Voir le produit</a>
+            <a href="{{ url($product->url()) }}" class="btn" style="color: #ffffff; background: #92400e; display: inline-block; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600;">Voir le produit</a>
         </p>
     </div>
 
