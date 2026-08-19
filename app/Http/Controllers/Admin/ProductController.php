@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\BackInStockNotification;
 use App\Models\Product;
 use App\Models\ProductAddon;
 use App\Models\ProductAddonAssignment;
 use App\Models\ProductAddonGroup;
 use App\Models\ProductCategory;
+use App\Models\StockNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Mews\Purifier\Facades\Purifier;
 
@@ -152,10 +155,16 @@ class ProductController extends Controller
         $validated['description'] = isset($validated['description']) ? Purifier::clean($validated['description']) : null;
         $validated['excluded_global_group_ids'] = $this->computeExcludedGlobalIds($request);
 
+        $wasOutOfStock = ! $product->isInStock();
+
         $product->update($validated);
 
         $this->syncAddonGroups($product, $request->input('addon_groups', []));
         $product->tags()->sync($request->input('tags', []));
+
+        if ($wasOutOfStock && $product->isInStock()) {
+            $this->sendBackInStockNotifications($product);
+        }
 
         return redirect()->route('admin.products.index')->with('success', 'Produit mis a jour.');
     }
@@ -187,5 +196,24 @@ class ProductController extends Controller
         $excluded = array_values(array_diff($allGlobalIds, $checkedGlobalIds));
 
         return ! empty($excluded) ? $excluded : null;
+    }
+
+    private function sendBackInStockNotifications(Product $product): void
+    {
+        $notifications = StockNotification::where('product_id', $product->id)
+            ->where('notified', false)
+            ->get();
+
+        foreach ($notifications as $notification) {
+            try {
+                Mail::to($notification->email)->send(new BackInStockNotification($product));
+                $notification->update(['notified' => true]);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("BackInStock: échec envoi à {$notification->email}", [
+                    'product_id' => $product->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 }

@@ -68,6 +68,11 @@ class Product extends Model
         return $this->belongsToMany(ProductAddonGroup::class, 'product_addon_assignments', 'product_id', 'group_id');
     }
 
+    public function pendingStockNotifications()
+    {
+        return $this->hasMany(StockNotification::class)->where('notified', false);
+    }
+
     public function getEffectivePriceAttribute(): float
     {
         return $this->sale_price ?? $this->price;

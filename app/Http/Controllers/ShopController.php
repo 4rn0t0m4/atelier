@@ -227,6 +227,20 @@ class ShopController extends Controller
         return back()->with('review_success', 'Merci pour votre avis ! Il sera publié après validation.');
     }
 
+    public function stockNotify(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|max:255',
+        ]);
+
+        StockNotification::updateOrCreate(
+            ['product_id' => $product->id, 'email' => strtolower($validated['email'])],
+            ['notified' => false],
+        );
+
+        return back()->with('stock_notify_success', 'Vous serez averti(e) par email dès que ce produit sera de nouveau disponible.');
+    }
+
     public function search(Request $request)
     {
         $q = trim($request->input('q', ''));

@@ -24,6 +24,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/boutique', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/boutique/recherche', [ShopController::class, 'search'])->name('shop.search');
 Route::post('/boutique/{product}/avis', [ShopController::class, 'storeReview'])->name('shop.review.store')->middleware('throttle:5,1');
+Route::post('/boutique/{product}/alerte-stock', [ShopController::class, 'stockNotify'])->name('shop.stock-notify')->middleware('throttle:5,1');
 Route::get('/boutique/{parent}/{child}/{product}', [ShopController::class, 'show'])->name('shop.show');
 Route::get('/boutique/{parent}/{child?}', [ShopController::class, 'categoryOrProduct'])->name('shop.category');
 

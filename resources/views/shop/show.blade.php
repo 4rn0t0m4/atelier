@@ -255,10 +255,32 @@ $breadcrumbJsonLd = json_encode([
                 </div>
             @endif
 
-            {{-- Stock epuise --}}
+            {{-- Stock epuise + alerte retour en stock --}}
             @if(!$product->isInStock())
                 <div class="mb-6 rounded-xl p-4 bg-red-50 border border-red-200">
-                    <p class="text-sm font-medium text-red-600">Produit epuise</p>
+                    <p class="text-sm font-medium text-red-600 mb-3">Produit épuisé</p>
+
+                    @if(session('stock_notify_success'))
+                        <p class="text-sm text-green-700">{{ session('stock_notify_success') }}</p>
+                    @else
+                        <form action="{{ route('shop.stock-notify', $product) }}" method="POST" data-turbo="false" class="flex flex-col gap-2">
+                            @csrf
+                            <label for="stock-email" class="text-xs text-gray-600">Prévenez-moi quand ce produit sera de nouveau disponible :</label>
+                            <div class="flex gap-2">
+                                <input type="email" name="email" id="stock-email" required
+                                       value="{{ auth()->user()?->email ?? old('email') }}"
+                                       placeholder="votre@email.fr"
+                                       class="flex-1 text-sm px-3 py-2 rounded-lg border border-gray-300 focus:border-brand-600 focus:ring-1 focus:ring-brand-600 outline-none">
+                                <button type="submit"
+                                        class="text-sm px-4 py-2 rounded-lg text-white bg-brand-600 hover:opacity-90 transition font-medium whitespace-nowrap">
+                                    M'alerter
+                                </button>
+                            </div>
+                            @error('email')
+                                <p class="text-xs text-red-500">{{ $message }}</p>
+                            @enderror
+                        </form>
+                    @endif
                 </div>
             @endif
 
