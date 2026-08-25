@@ -63,7 +63,7 @@ return [
         ],
         'express' => [
             'label' => 'Express (expédition sous 1 semaine)',
-            'price' => 9.90,
+            'price' => 12.90,
         ],
         'boxtal_intl' => [
             'label' => 'Point relais international',
