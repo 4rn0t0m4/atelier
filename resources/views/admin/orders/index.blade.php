@@ -80,7 +80,11 @@
                     </thead>
                     <tbody>
                         @forelse ($orders as $order)
-                            <tr class="border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer transition"
+                            @php $isExpress = $order->shipping_key === 'express' || str_contains(strtolower($order->shipping_method ?? ''), 'express'); @endphp
+                            <tr @class([
+                                    'border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer transition',
+                                    'border-l-4 border-l-amber-500' => $isExpress,
+                                ])
                                 :class="activeOrderId === {{ $order->id }} && 'bg-brand-50 hover:bg-brand-50'"
                                 @click="open({{ $order->id }})">
                                 <td class="px-2 py-4" @click.stop>
@@ -111,7 +115,14 @@
                                     <x-admin.badge :status="$order->status" />
                                 </td>
                                 <td class="px-5 py-4 text-sm text-gray-500">
-                                    {{ $order->shipping_method ?? '-' }}
+                                    @if($isExpress)
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800" title="{{ $order->shipping_method }}">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M11.983 1.907a.75.75 0 00-1.292-.657l-8.5 9.5A.75.75 0 002.75 12h6.572l-1.305 6.093a.75.75 0 001.292.657l8.5-9.5A.75.75 0 0017.25 8h-6.572l1.305-6.093z"/></svg>
+                                            Express
+                                        </span>
+                                    @else
+                                        {{ $order->shipping_method ?? '-' }}
+                                    @endif
                                 </td>
                                 <td class="px-5 py-4 text-sm text-right font-medium text-gray-700">
                                     {{ number_format($order->total, 2, ',', ' ') }} &euro;
