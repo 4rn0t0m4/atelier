@@ -422,7 +422,7 @@ $breadcrumbJsonLd = json_encode([
                     <button type="submit"
                             {{ !$product->isInStock() ? 'disabled' : '' }}
                             class="flex-1 text-white py-3 px-6 rounded-xl font-semibold text-sm transition disabled:cursor-not-allowed hover:opacity-90 {{ $product->isInStock() ? 'bg-brand-600' : 'bg-gray-400' }}">
-                        {{ $product->isInStock() ? 'Ajouter au panier' : 'Produit epuise' }}
+                        {{ $product->isInStock() ? 'Ajouter au panier' : 'Produit épuisé' }}
                     </button>
                 </div>
             </form>
