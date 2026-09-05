@@ -111,6 +111,29 @@
             </div>
         </div>
 
+        {{-- Alertes retour en stock --}}
+        @if($isEdit && $product->pendingStockNotifications->isNotEmpty())
+            <div id="alertes-stock" class="rounded-2xl border border-amber-200 bg-white p-5 space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-base font-semibold text-gray-800">Alertes retour en stock</h3>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
+                        {{ $product->pendingStockNotifications->count() }} en attente
+                    </span>
+                </div>
+                <p class="text-sm text-gray-500">
+                    Ces personnes seront prévenues par email dès que le produit repassera en stock.
+                </p>
+                <ul class="divide-y divide-gray-100 text-sm">
+                    @foreach($product->pendingStockNotifications as $notification)
+                        <li class="flex items-center justify-between py-2">
+                            <a href="mailto:{{ $notification->email }}" class="text-gray-700 hover:text-brand-600">{{ $notification->email }}</a>
+                            <span class="text-xs text-gray-400">{{ $notification->created_at->format('d/m/Y') }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         {{-- Addon groups --}}
         @php
             $assignedIds = $isEdit ? $product->addonGroups->pluck('id')->toArray() : [];

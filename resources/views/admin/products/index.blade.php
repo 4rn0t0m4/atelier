@@ -91,13 +91,25 @@
                                 @endif
                             </td>
                             <td class="px-5 py-4 text-sm text-right">
-                                @if($product->manage_stock)
-                                    <span class="{{ $product->stock_quantity > 0 ? 'text-gray-700' : 'text-red-600 font-medium' }}">
-                                        {{ $product->stock_quantity }}
-                                    </span>
-                                @else
-                                    <span class="text-gray-400">-</span>
-                                @endif
+                                <div class="flex items-center justify-end gap-2">
+                                    @if($product->pending_stock_notifications_count > 0)
+                                        <a href="{{ route('admin.products.edit', $product) }}#alertes-stock"
+                                           title="{{ $product->pending_stock_notifications_count }} personne(s) en attente d'une alerte retour en stock"
+                                           class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-xs font-medium hover:bg-amber-100">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                            </svg>
+                                            {{ $product->pending_stock_notifications_count }}
+                                        </a>
+                                    @endif
+                                    @if($product->manage_stock)
+                                        <span class="{{ $product->stock_quantity > 0 ? 'text-gray-700' : 'text-red-600 font-medium' }}">
+                                            {{ $product->stock_quantity }}
+                                        </span>
+                                    @else
+                                        <span class="text-gray-400">-</span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="px-5 py-4 text-center">
                                 <button onclick="toggleActive({{ $product->id }}, this)"

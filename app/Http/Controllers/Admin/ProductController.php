@@ -19,7 +19,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category');
+        $query = Product::with('category')->withCount('pendingStockNotifications');
 
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -105,7 +105,12 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load(['addonGroups', 'featuredImage', 'tags']);
+        $product->load([
+            'addonGroups',
+            'featuredImage',
+            'tags',
+            'pendingStockNotifications' => fn ($q) => $q->orderByDesc('created_at'),
+        ]);
         $categories = ProductCategory::with('children.children.children')->orderBy('sort_order')->orderBy('name')->get();
         $addonGroups = ProductAddonGroup::with('addons')->orderBy('sort_order')->get();
 
