@@ -83,6 +83,9 @@
 <body class="bg-white text-gray-900 font-sans antialiased" x-data>
 
     {{-- Header --}}
+    {{-- Bandeau d'information (fermeture de l'atelier, etc.) --}}
+    @include('partials.closure-notice')
+
     @include('partials.header')
 
     {{-- Bannière fermeture estivale --}}
