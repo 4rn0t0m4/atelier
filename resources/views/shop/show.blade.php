@@ -410,11 +410,11 @@ $breadcrumbJsonLd = json_encode([
                                 aria-label="Diminuer la quantite"
                                 class="px-3.5 py-2.5 transition hover:bg-brand-50 text-brand-700">-</button>
                         <input type="number" name="quantity" x-model="qty"
-                               min="1" max="99" aria-label="Quantite"
+                               min="1" max="999" aria-label="Quantite"
                                :readonly="syncQty"
                                class="w-12 text-center py-2.5 border-0 text-sm focus:outline-none text-brand-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                         <button type="button"
-                                @click="qty = Math.min(99, qty + 1)"
+                                @click="qty = Math.min(999, qty + 1)"
                                 :disabled="syncQty"
                                 aria-label="Augmenter la quantite"
                                 class="px-3.5 py-2.5 transition hover:bg-brand-50 text-brand-700">+</button>

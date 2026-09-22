@@ -47,10 +47,10 @@
         @csrf @method('PATCH')
         <button type="button" @click="qty = Math.max(0, qty - 1); $nextTick(() => $el.closest('form').submit())"
                 class="w-7 h-7 flex items-center justify-center border border-gray-200 rounded text-gray-600 hover:bg-gray-50 text-sm">-</button>
-        <input type="number" name="quantity" x-model="qty" min="0" max="99"
+        <input type="number" name="quantity" x-model="qty" min="0" max="999"
                class="w-10 text-center text-sm border border-gray-200 rounded py-0.5 focus:outline-none focus:ring-1 focus:ring-brand-500"
                @change="$nextTick(() => $el.closest('form').submit())">
-        <button type="button" @click="qty = Math.min(99, qty + 1); $nextTick(() => $el.closest('form').submit())"
+        <button type="button" @click="qty = Math.min(999, qty + 1); $nextTick(() => $el.closest('form').submit())"
                 class="w-7 h-7 flex items-center justify-center border border-gray-200 rounded text-gray-600 hover:bg-gray-50 text-sm">+</button>
     </form>
 

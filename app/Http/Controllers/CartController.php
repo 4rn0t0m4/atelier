@@ -45,7 +45,7 @@ class CartController extends Controller
     {
         $request->validate([
             'product_id' => 'required|exists:products,id',
-            'quantity' => 'integer|min:1|max:99',
+            'quantity' => 'integer|min:1|max:999',
         ]);
 
         $product = Product::findOrFail($request->product_id);
@@ -80,7 +80,7 @@ class CartController extends Controller
 
     public function update(Request $request, string $key)
     {
-        $request->validate(['quantity' => 'required|integer|min:0|max:99']);
+        $request->validate(['quantity' => 'required|integer|min:0|max:999']);
 
         $this->cart->update($key, (int) $request->quantity);
 
