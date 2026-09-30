@@ -20,18 +20,16 @@
                     </select>
                 </div>
 
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Transporteur</label>
-                    <input type="text" name="tracking_carrier" value="{{ old('tracking_carrier', $order->tracking_carrier) }}"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500"
-                           placeholder="Colissimo, Mondial Relay...">
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Numero de suivi</label>
-                    <input type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}"
-                           class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                </div>
+                @unless($order->isRelayDelivery())
+                    @include('admin.orders._tracking-fields', [
+                        'order' => $order,
+                        'labelClass' => 'block text-sm text-gray-600 mb-1',
+                    ])
+                @else
+                    <p class="text-sm text-gray-500">
+                        Livraison en point relais : le suivi est renseigné automatiquement par Boxtal.
+                    </p>
+                @endunless
 
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">Note interne</label>

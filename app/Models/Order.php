@@ -8,6 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+
+    /**
+     * Transporteurs dont le suivi est assure par le portail La Poste.
+     */
+    public const LA_POSTE_CARRIERS = ['Colissimo', 'La Poste'];
+
+    /**
+     * Cles de livraison en point relais (expedition pilotee par Boxtal).
+     */
+    public const RELAY_SHIPPING_KEYS = ['boxtal', 'boxtal_intl'];
+
     protected $fillable = [
         'user_id', 'number', 'invoice_number', 'status',
         'subtotal', 'discount_total', 'shipping_total', 'tax_total', 'total', 'currency',
@@ -63,5 +74,30 @@ class Order extends Model
     public function getBillingFullNameAttribute(): string
     {
         return trim(($this->billing_first_name ?? '') . ' ' . ($this->billing_last_name ?? ''));
+    }
+
+    public static function isLaPosteCarrier(?string $carrier): bool
+    {
+        $carriers = array_map('mb_strtolower', self::LA_POSTE_CARRIERS);
+
+        return in_array(mb_strtolower(trim((string) $carrier)), $carriers, true);
+    }
+
+    public static function laPosteTrackingUrl(?string $trackingNumber): ?string
+    {
+        $trackingNumber = trim((string) $trackingNumber);
+
+        return $trackingNumber !== ''
+            ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . urlencode($trackingNumber)
+            : null;
+    }
+
+    /**
+     * Livraison en point relais (Boxtal) plutot qu'a domicile.
+     */
+    public function isRelayDelivery(): bool
+    {
+        return in_array($this->shipping_key, self::RELAY_SHIPPING_KEYS, true)
+            || str_contains(mb_strtolower((string) $this->shipping_method), 'relais');
     }
 }

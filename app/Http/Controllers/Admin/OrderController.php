@@ -78,6 +78,11 @@ class OrderController extends Controller
             'customer_note' => 'nullable|string|max:1000',
         ]);
 
+        // Suivi La Poste / Colissimo : le lien est toujours derive du numero de suivi
+        if (Order::isLaPosteCarrier($validated['tracking_carrier'] ?? null)) {
+            $validated['tracking_url'] = Order::laPosteTrackingUrl($validated['tracking_number'] ?? null);
+        }
+
         $oldStatus = $order->status;
 
         $order->update($validated);

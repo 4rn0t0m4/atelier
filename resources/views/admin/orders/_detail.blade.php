@@ -154,45 +154,35 @@
             @csrf
             @method('PUT')
 
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Statut</label>
-                    <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
-                        @foreach(['pending' => 'Non réglée', 'processing' => 'En cours', 'shipped' => 'Expédiée', 'completed' => 'Terminée', 'cancelled' => 'Annulée', 'refunded' => 'Remboursée'] as $val => $lbl)
-                            <option value="{{ $val }}" {{ $order->status === $val ? 'selected' : '' }}>{{ $lbl }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 mb-1">Transporteur</label>
-                    <input type="text" name="tracking_carrier" value="{{ $order->tracking_carrier }}"
-                           placeholder="Colissimo..."
-                           class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
-                </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Statut</label>
+                <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
+                    @foreach(['pending' => 'Non réglée', 'processing' => 'En cours', 'shipped' => 'Expédiée', 'completed' => 'Terminée', 'cancelled' => 'Annulée', 'refunded' => 'Remboursée'] as $val => $lbl)
+                        <option value="{{ $val }}" {{ $order->status === $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                    @endforeach
+                </select>
             </div>
 
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">N° de suivi</label>
-                <input type="text" name="tracking_number" value="{{ $order->tracking_number }}"
-                       placeholder="Numéro de suivi"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
-            </div>
-
-            <div>
-                <label class="block text-xs text-gray-500 mb-1">Lien de suivi</label>
-                <input type="url" name="tracking_url" value="{{ $order->tracking_url }}"
-                       placeholder="https://..."
-                       class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500">
-            </div>
+            @unless($order->isRelayDelivery())
+                <div class="pt-2 border-t border-gray-100">
+                    <p class="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Livraison à domicile</p>
+                    @include('admin.orders._tracking-fields', [
+                        'order' => $order,
+                        'inputClass' => 'w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-brand-500 focus:border-brand-500',
+                    ])
+                </div>
+            @endunless
 
             <button type="submit" class="w-full py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">
                 Mettre à jour
             </button>
 
             @php
-                $trackingLink = $order->tracking_url ?: ($order->tracking_number ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number : null);
+                $trackingLink = $order->tracking_url ?: (\App\Models\Order::isLaPosteCarrier($order->tracking_carrier)
+                    ? \App\Models\Order::laPosteTrackingUrl($order->tracking_number)
+                    : null);
             @endphp
-            @if($trackingLink)
+            @if($trackingLink && ! $order->isRelayDelivery())
                     <a href="{{ $trackingLink }}" target="_blank"
                        class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,10 +247,12 @@
         </div>
     </div>
 
-    {{-- Boxtal --}}
-    @if(in_array($order->shipping_key, ['boxtal', 'boxtal_intl']) || str_contains(strtolower($order->shipping_method ?? ''), 'relais'))
+    {{-- Livraison en relais (Boxtal) --}}
+    @if($order->isRelayDelivery())
         <div class="rounded-xl border border-gray-200 bg-white p-4">
-            <h3 class="text-xs font-semibold text-gray-800 mb-3 uppercase tracking-wide">Boxtal</h3>
+            <h3 class="text-xs font-semibold text-gray-800 mb-3 uppercase tracking-wide">Livraison en relais (Boxtal)</h3>
+
+            @include('admin.orders._relay-tracking', ['order' => $order])
 
             @if($order->boxtal_shipping_order_id)
                 <div class="space-y-3 text-sm text-gray-600">

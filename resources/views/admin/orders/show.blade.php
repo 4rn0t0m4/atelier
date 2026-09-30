@@ -181,35 +181,23 @@
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">Transporteur</label>
-                        <input type="text" name="tracking_carrier" value="{{ old('tracking_carrier', $order->tracking_carrier) }}"
-                               placeholder="Colissimo, Mondial Relay..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">N° de suivi</label>
-                        <input type="text" name="tracking_number" value="{{ old('tracking_number', $order->tracking_number) }}"
-                               placeholder="Numero de suivi"
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs text-gray-500 mb-1">Lien de suivi</label>
-                        <input type="url" name="tracking_url" value="{{ old('tracking_url', $order->tracking_url) }}"
-                               placeholder="https://..."
-                               class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                    </div>
+                    @unless($order->isRelayDelivery())
+                        <div class="pt-2 border-t border-gray-100">
+                            <p class="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-3">Livraison a domicile</p>
+                            @include('admin.orders._tracking-fields', ['order' => $order])
+                        </div>
+                    @endunless
 
                     <button type="submit" class="w-full py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">
                         Mettre a jour
                     </button>
 
                     @php
-                        $trackingLink = $order->tracking_url ?: ($order->tracking_number ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . $order->tracking_number : null);
+                        $trackingLink = $order->tracking_url ?: (\App\Models\Order::isLaPosteCarrier($order->tracking_carrier)
+                            ? \App\Models\Order::laPosteTrackingUrl($order->tracking_number)
+                            : null);
                     @endphp
-                    @if($trackingLink)
+                    @if($trackingLink && ! $order->isRelayDelivery())
                             <a href="{{ $trackingLink }}" target="_blank"
                                class="flex items-center justify-center gap-2 w-full py-2 border border-brand-200 rounded-lg text-sm font-medium text-brand-700 hover:bg-brand-50 transition">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,10 +258,12 @@
                 </div>
             </div>
 
-            {{-- Expédition Boxtal --}}
-            @if(in_array($order->shipping_key, ['boxtal', 'boxtal_intl']) || str_contains(strtolower($order->shipping_method ?? ''), 'relais'))
+            {{-- Expédition en point relais (Boxtal) --}}
+            @if($order->isRelayDelivery())
                 <div class="rounded-2xl border border-gray-200 bg-white p-5">
-                    <h3 class="text-sm font-semibold text-gray-800 mb-4">Boxtal</h3>
+                    <h3 class="text-sm font-semibold text-gray-800 mb-4">Livraison en relais (Boxtal)</h3>
+
+                    @include('admin.orders._relay-tracking', ['order' => $order])
 
                     @if($order->boxtal_shipping_order_id)
                         <div class="space-y-3 text-sm text-gray-600">
