@@ -20,11 +20,11 @@
      x-data="{
         choice: @js($carrierChoice),
         custom: @js($customCarrier),
-        number: @js((string) old('tracking_number', $order->tracking_number)),
+        number: @js((string) \App\Models\Order::normalizeTrackingNumber(old('tracking_number', $order->tracking_number))),
         url: @js((string) old('tracking_url', $order->tracking_url)),
         get autoUrl() { return this.choice === 'Colissimo' || this.choice === 'La Poste'; },
      }"
-     x-effect="if (autoUrl) url = number.trim() ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' + encodeURIComponent(number.trim()) : ''">
+     x-effect="if (autoUrl) url = number ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' + encodeURIComponent(number) : ''">
 
     <div>
         <label class="{{ $labelClass }}">Transporteur</label>
@@ -43,7 +43,9 @@
 
     <div>
         <label class="{{ $labelClass }}">N&deg; de suivi</label>
+        {{-- Les numeros copies-colles contiennent souvent des espaces --}}
         <input type="text" name="tracking_number" x-model="number"
+               @input="number = number.replace(/\s+/g, '')"
                placeholder="Numero de suivi" class="{{ $inputClass }}">
     </div>
 

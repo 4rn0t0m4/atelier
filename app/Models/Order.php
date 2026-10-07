@@ -85,11 +85,27 @@ class Order extends Model
 
     public static function laPosteTrackingUrl(?string $trackingNumber): ?string
     {
-        $trackingNumber = trim((string) $trackingNumber);
+        $trackingNumber = self::normalizeTrackingNumber($trackingNumber);
 
-        return $trackingNumber !== ''
+        return $trackingNumber !== null
             ? 'https://www.laposte.fr/outils/suivre-vos-envois?code=' . urlencode($trackingNumber)
             : null;
+    }
+
+    /**
+     * Les numeros de suivi sont souvent copies-colles avec des espaces
+     * (ex. « 8J 0090097889 8 »), que les transporteurs n'attendent pas.
+     */
+    public static function normalizeTrackingNumber(?string $trackingNumber): ?string
+    {
+        $trackingNumber = preg_replace('/\s+/u', '', (string) $trackingNumber);
+
+        return $trackingNumber !== '' ? $trackingNumber : null;
+    }
+
+    public function setTrackingNumberAttribute($value): void
+    {
+        $this->attributes['tracking_number'] = self::normalizeTrackingNumber($value);
     }
 
     /**
