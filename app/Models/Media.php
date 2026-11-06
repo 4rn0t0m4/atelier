@@ -13,6 +13,10 @@ class Media extends Model
 
     public function getUrlAttribute($value): string
     {
+        if (str_starts_with($value, '/storage/')) {
+            return $value;
+        }
+
         if (app()->environment('local') && str_starts_with($value, 'https://www.atelier-aubin.fr/')) {
             return str_replace('https://www.atelier-aubin.fr', '', $value);
         }
