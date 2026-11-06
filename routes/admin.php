@@ -43,6 +43,7 @@ Route::delete('commandes/{order}', [OrderController::class, 'destroy'])->name('a
 Route::post('commandes/{order}/create-shipment', [OrderController::class, 'createShipment'])->name('admin.orders.create-shipment');
 Route::get('commandes/{order}/label', [OrderController::class, 'label'])->name('admin.orders.label');
 Route::delete('commandes/{order}/reset-shipment', [OrderController::class, 'resetShipment'])->name('admin.orders.reset-shipment');
+Route::post('commandes/{order}/renvoyer-email', [OrderController::class, 'resendEmail'])->name('admin.orders.resend-email');
 
 // Export
 Route::get('export', [ExportController::class, 'index'])->name('admin.export.index');

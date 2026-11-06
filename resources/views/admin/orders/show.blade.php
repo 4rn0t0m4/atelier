@@ -242,6 +242,8 @@
                         Telecharger la facture
                     </a>
 
+                    @include('admin.orders._resend-email', ['order' => $order])
+
                     @if(in_array($order->status, ['pending', 'cancelled']))
                         <form action="{{ route('admin.orders.destroy', $order) }}" method="POST"
                               onsubmit="return confirm('Supprimer cette commande ?')">

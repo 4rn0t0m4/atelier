@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderConfirmation;
 use App\Mail\OrderShipped;
+use App\Mail\ReviewRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\BoxtalShippingService;
@@ -14,6 +16,15 @@ use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
+    /**
+     * Emails client que l'admin peut renvoyer, indexes par la valeur du formulaire.
+     */
+    private const RESENDABLE_MAILS = [
+        'confirmation' => OrderConfirmation::class,
+        'shipped' => OrderShipped::class,
+        'review' => ReviewRequest::class,
+    ];
+
     public function index(Request $request)
     {
         $query = Order::with('user')->latest();
@@ -105,6 +116,36 @@ class OrderController extends Controller
         }
 
         return redirect()->route('admin.orders.show', $order)->with('success', 'Commande mise à jour.');
+    }
+
+    public function resendEmail(Request $request, Order $order)
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:' . implode(',', array_keys(self::RESENDABLE_MAILS)),
+            'email' => 'required|email|max:255',
+        ]);
+
+        // Permet de corriger une adresse mal saisie au passage
+        if ($validated['email'] !== $order->billing_email) {
+            $order->update(['billing_email' => $validated['email']]);
+        }
+
+        $mailable = self::RESENDABLE_MAILS[$validated['type']];
+
+        try {
+            $order->load('items.addons');
+            Mail::to($validated['email'])->send(new $mailable($order));
+            $flash = ['success' => "Email envoyé à {$validated['email']}."];
+        } catch (\Exception $e) {
+            Log::error("Erreur renvoi email {$validated['type']} #{$order->number}", ['error' => $e->getMessage()]);
+            $flash = ['error' => "L'envoi a échoué, consultez les logs."];
+        }
+
+        if ($request->ajax()) {
+            return response()->json($flash + ['order_id' => $order->id]);
+        }
+
+        return redirect()->route('admin.orders.show', $order)->with($flash);
     }
 
     public function invoice(Order $order)

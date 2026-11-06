@@ -245,6 +245,10 @@
                 </form>
             @endif
         </div>
+
+        <div class="mt-3">
+            @include('admin.orders._resend-email', ['order' => $order, 'panel' => true])
+        </div>
     </div>
 
     {{-- Livraison en relais (Boxtal) --}}
