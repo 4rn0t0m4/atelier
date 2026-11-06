@@ -107,9 +107,10 @@ class CartFeatureTest extends TestCase
             'quantity' => 0,
         ])->assertSessionHasErrors(['quantity']);
 
+        // Au-dela du plafond de 999 par article
         $this->post('/panier/ajouter', [
             'product_id' => $product->id,
-            'quantity' => 100,
+            'quantity' => 1000,
         ])->assertSessionHasErrors(['quantity']);
     }
 }
