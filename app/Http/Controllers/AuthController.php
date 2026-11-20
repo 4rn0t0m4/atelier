@@ -2,37 +2,213 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\AdminLoginAlert;
 use App\Models\User;
+use App\Services\AdminPushService;
+use App\Services\TwoFactorService;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password as PasswordFacade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
+    /**
+     * Echecs de connexion toleres pour un couple email + IP avant blocage.
+     */
+    private const MAX_LOGIN_ATTEMPTS = 5;
+
+    private const LOCKOUT_SECONDS = 15 * 60;
+
+    /**
+     * Connexion en attente du code de double authentification (cle de session).
+     */
+    private const PENDING_TWO_FACTOR = 'login.two_factor';
+
+    private const TWO_FACTOR_MINUTES = 10;
+
     public function loginForm()
     {
         return view('auth.login');
     }
 
-    public function login(Request $request)
+    public function login(Request $request, TwoFactorService $twoFactor)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $request->session()->regenerate();
+        $throttleKey = 'login|' . Str::lower($credentials['email']) . '|' . $request->ip();
 
-            return redirect()->intended(route('account.index'));
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
+            $minutes = (int) ceil(RateLimiter::availableIn($throttleKey) / 60);
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => "Trop de tentatives. Réessayez dans {$minutes} minute(s)."]);
         }
 
-        return back()
-            ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Identifiants incorrects.']);
+        if (! Auth::validate($credentials)) {
+            RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
+
+            return back()
+                ->withInput($request->only('email'))
+                ->withErrors(['email' => 'Identifiants incorrects.']);
+        }
+
+        RateLimiter::clear($throttleKey);
+        $user = Auth::getLastAttempted();
+
+        if ($user->hasTwoFactorEnabled() && ! $twoFactor->isTrustedDevice($request, $user)) {
+            // Mot de passe correct, mais rien n'est ouvert tant que le code n'est pas saisi
+            $request->session()->put(self::PENDING_TWO_FACTOR, [
+                'id' => $user->id,
+                'remember' => $request->boolean('remember'),
+                'expires' => now()->addMinutes(self::TWO_FACTOR_MINUTES)->timestamp,
+            ]);
+
+            return redirect()->route('login.two-factor');
+        }
+
+        return $this->completeLogin($request, $user, $request->boolean('remember'));
+    }
+
+    public function twoFactorForm(Request $request)
+    {
+        if (! $this->pendingTwoFactorUser($request)) {
+            return redirect()->route('login');
+        }
+
+        return view('auth.two-factor', ['trustDays' => TwoFactorService::TRUST_DAYS]);
+    }
+
+    public function twoFactorVerify(Request $request, TwoFactorService $twoFactor)
+    {
+        $user = $this->pendingTwoFactorUser($request);
+
+        if (! $user) {
+            return redirect()->route('login')->withErrors(['email' => 'La vérification a expiré, reconnectez-vous.']);
+        }
+
+        $request->validate(['code' => 'required|string|max:20'], ['code.required' => 'Saisissez le code.']);
+
+        $throttleKey = 'two-factor|' . $user->id;
+
+        if (RateLimiter::tooManyAttempts($throttleKey, self::MAX_LOGIN_ATTEMPTS)) {
+            $request->session()->forget(self::PENDING_TWO_FACTOR);
+            $minutes = (int) ceil(RateLimiter::availableIn($throttleKey) / 60);
+
+            return redirect()->route('login')
+                ->withErrors(['email' => "Trop de codes incorrects. Réessayez dans {$minutes} minute(s)."]);
+        }
+
+        // 6 chiffres : code de l'application ; sinon, code de secours
+        $code = preg_replace('/\s+/', '', $request->code);
+        $usedRecoveryCode = ! preg_match('/^\d{6}$/', $code);
+
+        $valid = $usedRecoveryCode
+            ? $twoFactor->useRecoveryCode($user, $code)
+            : $twoFactor->verifyCode($user, $code);
+
+        if (! $valid) {
+            RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
+
+            return back()->withErrors(['code' => 'Code incorrect.']);
+        }
+
+        RateLimiter::clear($throttleKey);
+        $pending = $request->session()->pull(self::PENDING_TWO_FACTOR);
+        $trust = $request->boolean('trust');
+
+        if ($trust) {
+            Cookie::queue($twoFactor->trustCookie($user));
+        }
+
+        $response = $this->completeLogin($request, $user, $pending['remember'] || $trust);
+
+        if ($usedRecoveryCode) {
+            $remaining = count($user->two_factor_recovery_codes ?? []);
+            $response->with('warning', "Code de secours utilisé : il vous en reste {$remaining}.");
+        }
+
+        return $response;
+    }
+
+    private function pendingTwoFactorUser(Request $request): ?User
+    {
+        $pending = $request->session()->get(self::PENDING_TWO_FACTOR);
+
+        if (! $pending || $pending['expires'] < now()->timestamp) {
+            $request->session()->forget(self::PENDING_TWO_FACTOR);
+
+            return null;
+        }
+
+        return User::find($pending['id']);
+    }
+
+    private function completeLogin(Request $request, User $user, bool $remember)
+    {
+        if ($user->hasTwoFactorEnabled()) {
+            // « Se souvenir de moi » ne garde pas la session au-dela des 90 jours de confiance
+            Auth::guard()->setRememberDuration(TwoFactorService::TRUST_DAYS * 24 * 60);
+        }
+
+        Auth::login($user, $remember);
+        $request->session()->regenerate();
+
+        if ($user->is_admin) {
+            $this->alertAdminLogin($request);
+        }
+
+        return redirect()->intended(route('account.index'));
+    }
+
+    /**
+     * Previent l'admin (push + email) de toute connexion a son compte.
+     */
+    private function alertAdminLogin(Request $request): void
+    {
+        $user = $request->user();
+        $device = self::describeDevice((string) $request->userAgent());
+        $ip = (string) $request->ip();
+
+        app(AdminPushService::class)->notifyAdminLogin($user, $device, $ip);
+
+        try {
+            Mail::to($user->email)->send(new AdminLoginAlert($user, $device, $ip, now()->format('d/m/Y à H:i')));
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi alerte de connexion admin', ['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Resume lisible d'un user-agent : « Safari sur iPhone », « Chrome sur Windows »…
+     */
+    public static function describeDevice(string $userAgent): string
+    {
+        $systems = ['iPhone' => 'iPhone', 'iPad' => 'iPad', 'Android' => 'Android', 'Windows' => 'Windows', 'Macintosh' => 'Mac', 'Linux' => 'Linux'];
+        // L'ordre compte : Edge et Chrome se presentent aussi comme Safari
+        $browsers = ['Edg' => 'Edge', 'Firefox' => 'Firefox', 'FxiOS' => 'Firefox', 'CriOS' => 'Chrome', 'Chrome' => 'Chrome', 'Safari' => 'Safari'];
+
+        $find = function (array $names) use ($userAgent): ?string {
+            foreach ($names as $needle => $name) {
+                if (str_contains($userAgent, $needle)) {
+                    return $name;
+                }
+            }
+
+            return null;
+        };
+
+        return implode(' sur ', array_filter([$find($browsers), $find($systems)])) ?: 'Appareil inconnu';
     }
 
     public function registerForm()

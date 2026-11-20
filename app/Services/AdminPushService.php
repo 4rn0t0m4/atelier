@@ -64,6 +64,28 @@ class AdminPushService
         }
     }
 
+    /**
+     * Signale a tous les admins une connexion a un compte administrateur.
+     */
+    public function notifyAdminLogin(User $user, string $device, string $ip): int
+    {
+        try {
+            return $this->send(
+                PushSubscription::forAdmins()->get(),
+                [
+                    'title' => "Connexion à l'admin",
+                    'body' => "{$user->email}\n{$device} · IP {$ip}\nCe n'est pas vous ? Changez votre mot de passe.",
+                    'url' => route('account.profile', [], false),
+                    'tag' => 'admin-login',
+                ],
+            );
+        } catch (\Throwable $e) {
+            Log::error('Erreur notification push de connexion admin', ['error' => $e->getMessage()]);
+
+            return 0;
+        }
+    }
+
     public function newOrderPayload(Order $order): array
     {
         $order->loadMissing('items');

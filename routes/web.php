@@ -60,6 +60,8 @@ Route::post('/api/ai-design/generate', [AiDesignController::class, 'generate'])-
 Route::middleware('guest')->group(function () {
     Route::get('/connexion', [AuthController::class, 'loginForm'])->name('login');
     Route::post('/connexion', [AuthController::class, 'login'])->name('login.post')->middleware('throttle:5,1');
+    Route::get('/connexion/verification', [AuthController::class, 'twoFactorForm'])->name('login.two-factor');
+    Route::post('/connexion/verification', [AuthController::class, 'twoFactorVerify'])->name('login.two-factor.verify')->middleware('throttle:10,1');
     Route::get('/inscription', [AuthController::class, 'registerForm'])->name('register');
     Route::post('/inscription', [AuthController::class, 'register'])->name('register.post')->middleware('throttle:5,1');
     Route::get('/mot-de-passe-oublie', [AuthController::class, 'forgotPasswordForm'])->name('password.request');

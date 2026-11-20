@@ -20,13 +20,21 @@ class User extends Authenticatable
         'shipping_city', 'shipping_postcode', 'shipping_country',
     ];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token', 'two_factor_secret', 'two_factor_recovery_codes'];
 
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_admin' => 'boolean',
+        'two_factor_secret' => 'encrypted',
+        'two_factor_recovery_codes' => 'array',
+        'two_factor_confirmed_at' => 'datetime',
     ];
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->two_factor_confirmed_at !== null && filled($this->two_factor_secret);
+    }
 
     public function orders()
     {

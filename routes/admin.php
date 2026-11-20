@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\SecurityController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,6 +51,12 @@ Route::post('commandes/{order}/renvoyer-email', [OrderController::class, 'resend
 Route::post('notifications/abonnement', [PushSubscriptionController::class, 'store'])->name('admin.push.subscribe');
 Route::delete('notifications/abonnement', [PushSubscriptionController::class, 'destroy'])->name('admin.push.unsubscribe');
 Route::post('notifications/test', [PushSubscriptionController::class, 'test'])->name('admin.push.test');
+
+// Securite du compte (double authentification)
+Route::get('securite', [SecurityController::class, 'index'])->name('admin.security.index');
+Route::post('securite/double-authentification', [SecurityController::class, 'enable'])->name('admin.security.enable');
+Route::delete('securite/double-authentification', [SecurityController::class, 'disable'])->name('admin.security.disable');
+Route::post('securite/codes-de-secours', [SecurityController::class, 'regenerateRecoveryCodes'])->name('admin.security.recovery-codes');
 
 // Export
 Route::get('export', [ExportController::class, 'index'])->name('admin.export.index');

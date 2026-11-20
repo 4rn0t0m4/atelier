@@ -34,6 +34,16 @@ Le coeur du projet. Trois types de prix :
 - Abonnements par appareil dans `push_subscriptions` ; activation via la cloche du header admin
 - `public/build` est versionné : relancer `npm run build` après tout changement de classes Tailwind
 
+## Sécurité des comptes
+- Connexion : blocage 15 min après 5 échecs pour un couple email + IP (en plus du `throttle` de route)
+- Toute connexion à un compte admin déclenche une alerte push + email (`AuthController::alertAdminLogin`)
+- `AuthenticateSession` est actif sur le groupe `web` : changer le mot de passe déconnecte les autres appareils
+- `SecurityHeaders` (middleware global) : en-têtes de sécurité partout, `no-store` + `noindex` sur `/admin`
+- Double authentification TOTP (Google Authenticator), activable par compte admin dans `/admin/securite` (`TwoFactorService`)
+  - Connexion : mot de passe, puis code sur `/connexion/verification` ; la case « 90 jours » pose le cookie `trusted_device` et limite « se souvenir de moi » à 90 jours
+  - Le cookie est signé avec le mot de passe et le secret : changer l'un des deux oublie tous les appareils mémorisés
+  - Téléphone et codes de secours perdus : `php artisan admin:2fa-disable {email}`
+
 ## Base de données legacy (migration)
 - Connexion `wp_legacy` dans config/database.php
 - Prefix tables : `mod745_`
