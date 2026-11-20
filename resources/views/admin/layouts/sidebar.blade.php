@@ -6,7 +6,8 @@
 
 <aside id="sidebar"
     style="position: fixed; top: 0; left: 0; height: 100vh; z-index: 99999;"
-    class="flex flex-col px-5 bg-white text-gray-900 transition-all duration-300 ease-in-out border-r border-gray-200"
+    {{-- Masquee des le rendu sur mobile : sinon elle apparait un instant a chaque navigation Turbo --}}
+    class="flex flex-col px-5 bg-white text-gray-900 transition-all duration-300 ease-in-out border-r border-gray-200 -translate-x-full lg:translate-x-0"
     x-data="{
         openSubmenus: {},
         init() {
