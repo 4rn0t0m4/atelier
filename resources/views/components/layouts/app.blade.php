@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- L'app installee de l'admin (marquee par admin/layouts/pwa-meta) ne sert qu'a l'admin --}}
+    <script>
+        try {
+            if ((window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true)
+                && localStorage.getItem('adminApp') === '1') {
+                window.location.replace('/admin/commandes');
+            }
+        } catch (e) {}
+    </script>
+
     {{-- Google Analytics --}}
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-MVM8MP7KTF"></script>
     <script>

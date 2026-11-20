@@ -1,17 +1,6 @@
-{{-- App installable sur telephone + notifications push (voir public/admin-sw.js) --}}
-<link rel="manifest" href="/admin.webmanifest">
-<meta name="theme-color" content="#ffffff">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Atelier">
-<link rel="apple-touch-icon" href="/images/pwa/apple-touch-icon.png">
+@include('admin.layouts.pwa-meta')
 
-<style>
-    /* iOS zoome sur tout champ dont le texte fait moins de 16px */
-    @media (max-width: 767px) {
-        input, select, textarea { font-size: 16px !important; }
-    }
-</style>
+{{-- Notifications push (voir public/admin-sw.js) --}}
 
 <script>
     window.adminPushConfig = {{ Illuminate\Support\Js::from([

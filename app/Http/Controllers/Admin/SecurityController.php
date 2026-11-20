@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Services\TwoFactorService;
 use Illuminate\Http\Request;
 
@@ -65,6 +66,14 @@ class SecurityController extends Controller
         return redirect()->route('admin.security.index')
             ->with('success', 'Double authentification activée.')
             ->with('recovery_codes', $codes);
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request)
+    {
+        $request->user()->update(['password' => $request->password]);
+
+        return redirect()->route('admin.security.index')
+            ->with('success', 'Mot de passe modifié : les autres appareils sont déconnectés.');
     }
 
     public function regenerateRecoveryCodes(Request $request, TwoFactorService $twoFactor)

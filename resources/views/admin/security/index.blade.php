@@ -9,6 +9,10 @@
 
     <div class="max-w-xl space-y-6">
 
+        @if ($errors->any())
+            <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">{{ $errors->first() }}</div>
+        @endif
+
         {{-- Codes de secours : affiches une seule fois, juste apres leur creation --}}
         @if (! empty($recoveryCodes))
             <div class="rounded-2xl border border-amber-300 bg-amber-50 p-5" x-data>
@@ -77,9 +81,6 @@
                 </button>
             </form>
 
-            @error('current_password')
-                <p class="text-sm text-red-600">{{ $message }}</p>
-            @enderror
         @else
             <div class="rounded-2xl border border-gray-200 bg-white p-5">
                 <div class="flex items-center justify-between gap-3">
@@ -123,17 +124,11 @@
                                 <label for="code" class="block text-sm font-medium text-gray-700 mb-1">Code affiché par l'application</label>
                                 <input type="text" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"
                                        placeholder="123 456" class="{{ $inputClass }}" required>
-                                @error('code')
-                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                                @enderror
                             </div>
                             <div>
                                 <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Votre mot de passe</label>
                                 <input type="password" id="current_password" name="current_password" autocomplete="current-password"
                                        class="{{ $inputClass }}" required>
-                                @error('current_password')
-                                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                                @enderror
                             </div>
                             <button type="submit" class="w-full py-2.5 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">
                                 Activer la double authentification
@@ -143,5 +138,27 @@
                 </ol>
             </div>
         @endif
+
+        <form method="POST" action="{{ route('admin.security.password') }}" class="rounded-2xl border border-gray-200 bg-white p-5 space-y-3">
+            @csrf
+            @method('PUT')
+            <h3 class="text-base font-semibold text-gray-800">Mot de passe</h3>
+            <p class="text-sm text-gray-600">Le changer déconnecte tous les autres appareils.</p>
+            <div>
+                <label for="password_current" class="block text-sm font-medium text-gray-700 mb-1">Mot de passe actuel</label>
+                <input type="password" id="password_current" name="current_password" autocomplete="current-password" class="{{ $inputClass }}" required>
+            </div>
+            <div>
+                <label for="password_new" class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
+                <input type="password" id="password_new" name="password" autocomplete="new-password" minlength="8" class="{{ $inputClass }}" required>
+            </div>
+            <div>
+                <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirmer le nouveau mot de passe</label>
+                <input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password" minlength="8" class="{{ $inputClass }}" required>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-medium hover:bg-brand-700 transition">
+                Changer le mot de passe
+            </button>
+        </form>
     </div>
 @endsection

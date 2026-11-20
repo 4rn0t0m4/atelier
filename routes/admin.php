@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PushSubscriptionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SecurityController;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,9 @@ use Illuminate\Support\Facades\Route;
 | Middleware: web, auth, admin
 |
 */
+
+// Deconnexion : retour a la connexion de l'admin, pas a la boutique
+Route::post('deconnexion', [AuthController::class, 'logout'])->name('admin.logout');
 
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
@@ -56,6 +60,7 @@ Route::post('notifications/test', [PushSubscriptionController::class, 'test'])->
 Route::get('securite', [SecurityController::class, 'index'])->name('admin.security.index');
 Route::post('securite/double-authentification', [SecurityController::class, 'enable'])->name('admin.security.enable');
 Route::delete('securite/double-authentification', [SecurityController::class, 'disable'])->name('admin.security.disable');
+Route::put('securite/mot-de-passe', [SecurityController::class, 'updatePassword'])->name('admin.security.password');
 Route::post('securite/codes-de-secours', [SecurityController::class, 'regenerateRecoveryCodes'])->name('admin.security.recovery-codes');
 
 // Export

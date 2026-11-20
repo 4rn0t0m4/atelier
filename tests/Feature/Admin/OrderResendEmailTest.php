@@ -90,7 +90,7 @@ class OrderResendEmailTest extends TestCase
         $payload = ['type' => 'confirmation', 'email' => $order->billing_email];
 
         $this->post(route('admin.orders.resend-email', $order), $payload)
-            ->assertRedirect(route('login'));
+            ->assertRedirect(route('admin.login'));
 
         $this->actingAs(User::factory()->create(['is_admin' => false]))
             ->post(route('admin.orders.resend-email', $order), $payload)

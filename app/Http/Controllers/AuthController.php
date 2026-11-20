@@ -33,9 +33,22 @@ class AuthController extends Controller
 
     private const TWO_FACTOR_MINUTES = 10;
 
-    public function loginForm()
+    public function loginForm(Request $request)
     {
-        return view('auth.login');
+        return view($this->inAdmin($request) ? 'admin.auth.login' : 'auth.login');
+    }
+
+    /**
+     * Connexion faite depuis /admin (app installee) plutot que depuis la boutique.
+     */
+    private function inAdmin(Request $request): bool
+    {
+        return $request->is('admin', 'admin/*');
+    }
+
+    private function loginRoute(Request $request): string
+    {
+        return $this->inAdmin($request) ? 'admin.login' : 'login';
     }
 
     public function login(Request $request, TwoFactorService $twoFactor)
@@ -55,7 +68,10 @@ class AuthController extends Controller
                 ->withErrors(['email' => "Trop de tentatives. Réessayez dans {$minutes} minute(s)."]);
         }
 
-        if (! Auth::validate($credentials)) {
+        $user = Auth::validate($credentials) ? Auth::getLastAttempted() : null;
+
+        // Un compte client n'ouvre pas de session depuis la connexion de l'admin
+        if (! $user || ($this->inAdmin($request) && ! $user->is_admin)) {
             RateLimiter::hit($throttleKey, self::LOCKOUT_SECONDS);
 
             return back()
@@ -64,7 +80,6 @@ class AuthController extends Controller
         }
 
         RateLimiter::clear($throttleKey);
-        $user = Auth::getLastAttempted();
 
         if ($user->hasTwoFactorEnabled() && ! $twoFactor->isTrustedDevice($request, $user)) {
             // Mot de passe correct, mais rien n'est ouvert tant que le code n'est pas saisi
@@ -74,7 +89,7 @@ class AuthController extends Controller
                 'expires' => now()->addMinutes(self::TWO_FACTOR_MINUTES)->timestamp,
             ]);
 
-            return redirect()->route('login.two-factor');
+            return redirect()->route($this->loginRoute($request) . '.two-factor');
         }
 
         return $this->completeLogin($request, $user, $request->boolean('remember'));
@@ -83,10 +98,12 @@ class AuthController extends Controller
     public function twoFactorForm(Request $request)
     {
         if (! $this->pendingTwoFactorUser($request)) {
-            return redirect()->route('login');
+            return redirect()->route($this->loginRoute($request));
         }
 
-        return view('auth.two-factor', ['trustDays' => TwoFactorService::TRUST_DAYS]);
+        return view($this->inAdmin($request) ? 'admin.auth.two-factor' : 'auth.two-factor', [
+            'trustDays' => TwoFactorService::TRUST_DAYS,
+        ]);
     }
 
     public function twoFactorVerify(Request $request, TwoFactorService $twoFactor)
@@ -94,7 +111,8 @@ class AuthController extends Controller
         $user = $this->pendingTwoFactorUser($request);
 
         if (! $user) {
-            return redirect()->route('login')->withErrors(['email' => 'La vérification a expiré, reconnectez-vous.']);
+            return redirect()->route($this->loginRoute($request))
+                ->withErrors(['email' => 'La vérification a expiré, reconnectez-vous.']);
         }
 
         $request->validate(['code' => 'required|string|max:20'], ['code.required' => 'Saisissez le code.']);
@@ -105,7 +123,7 @@ class AuthController extends Controller
             $request->session()->forget(self::PENDING_TWO_FACTOR);
             $minutes = (int) ceil(RateLimiter::availableIn($throttleKey) / 60);
 
-            return redirect()->route('login')
+            return redirect()->route($this->loginRoute($request))
                 ->withErrors(['email' => "Trop de codes incorrects. Réessayez dans {$minutes} minute(s)."]);
         }
 
@@ -168,7 +186,17 @@ class AuthController extends Controller
             $this->alertAdminLogin($request);
         }
 
-        return redirect()->intended(route('account.index'));
+        $home = $user->is_admin ? route('admin.orders.index') : route('account.index');
+
+        if (! $this->inAdmin($request)) {
+            return redirect()->intended($home);
+        }
+
+        // Depuis l'admin, on ne reprend une page demandee que si elle est dans l'admin
+        $intended = (string) $request->session()->pull('url.intended');
+        $path = (string) parse_url($intended, PHP_URL_PATH);
+
+        return redirect($path === '/admin' || str_starts_with($path, '/admin/') ? $intended : $home);
     }
 
     /**
@@ -241,7 +269,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return redirect()->route($this->inAdmin($request) ? 'admin.login' : 'home');
     }
 
     public function forgotPasswordForm()

@@ -70,6 +70,14 @@ Route::middleware('guest')->group(function () {
     Route::post('/reinitialiser-mot-de-passe', [AuthController::class, 'resetPassword'])->name('password.update')->middleware('throttle:3,1');
 });
 
+// Connexion de l'admin : memes controles que /connexion, mais sans quitter /admin
+Route::prefix('admin')->middleware('guest')->group(function () {
+    Route::get('/connexion', [AuthController::class, 'loginForm'])->name('admin.login');
+    Route::post('/connexion', [AuthController::class, 'login'])->name('admin.login.post')->middleware('throttle:5,1');
+    Route::get('/connexion/verification', [AuthController::class, 'twoFactorForm'])->name('admin.login.two-factor');
+    Route::post('/connexion/verification', [AuthController::class, 'twoFactorVerify'])->name('admin.login.two-factor.verify')->middleware('throttle:10,1');
+});
+
 // Déconnexion
 Route::post('/deconnexion', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 

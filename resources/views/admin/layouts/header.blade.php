@@ -33,7 +33,7 @@
         <div class="flex items-center gap-2">
             {{-- View site --}}
             <a href="/" target="_blank"
-               class="hidden sm:flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition">
+               class="browser-only hidden sm:flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 transition">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                 </svg>
@@ -53,10 +53,13 @@
                 </button>
                 <div x-show="open" @click.away="open = false" x-transition x-cloak
                     class="absolute right-0 mt-2 w-48 rounded-lg border border-gray-200 bg-white py-2 shadow-lg">
-                    <a href="/" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <a href="/" target="_blank" class="browser-only block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         Voir le site
                     </a>
-                    <form method="POST" action="{{ route('logout') }}">
+                    <a href="{{ route('admin.security.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        Sécurité
+                    </a>
+                    <form method="POST" action="{{ route('admin.logout') }}" data-turbo="false">
                         @csrf
                         <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                             Deconnexion

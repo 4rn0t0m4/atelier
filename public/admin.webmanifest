@@ -5,7 +5,7 @@
     "description": "Gestion des commandes de l'Atelier d'Aubin",
     "lang": "fr",
     "start_url": "/admin/commandes",
-    "scope": "/",
+    "scope": "/admin",
     "display": "standalone",
     "orientation": "portrait",
     "background_color": "#f9fafb",

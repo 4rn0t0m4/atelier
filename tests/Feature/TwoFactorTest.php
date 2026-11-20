@@ -133,7 +133,7 @@ class TwoFactorTest extends TestCase
         $this->submitPassword()->assertRedirect(route('login.two-factor'));
 
         $this->assertGuest();
-        $this->get('/admin/commandes')->assertRedirect(route('login'));
+        $this->get('/admin/commandes')->assertRedirect(route('admin.login'));
         Mail::assertNothingSent();
     }
 
@@ -249,7 +249,7 @@ class TwoFactorTest extends TestCase
         $cookie = $this->loginAndTrustDevice();
 
         $this->travel(89)->days();
-        $this->withCookie(TwoFactorService::TRUST_COOKIE, $cookie)->submitPassword()->assertRedirect(route('account.index'));
+        $this->withCookie(TwoFactorService::TRUST_COOKIE, $cookie)->submitPassword()->assertRedirect(route('admin.orders.index'));
         $this->assertAuthenticatedAs($admin);
         $this->post('/deconnexion');
 

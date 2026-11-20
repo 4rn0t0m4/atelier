@@ -30,7 +30,7 @@
             <p>Si c'est vous, il n'y a rien à faire.</p>
             <p>
                 Sinon, changez immédiatement votre mot de passe depuis
-                <a href="{{ route('account.profile') }}">votre profil</a> :
+                <a href="{{ route('admin.security.index') }}">la page Sécurité de l'admin</a> :
                 tous les autres appareils seront déconnectés.
             </p>
         </div>

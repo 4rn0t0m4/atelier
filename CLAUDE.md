@@ -33,6 +33,8 @@ Le coeur du projet. Trois types de prix :
 - `AdminPushService::notifyNewOrder()` est appelé aux 3 points de confirmation de paiement (webhook Stripe, page success, PayPal) et ne lève jamais d'exception
 - Abonnements par appareil dans `push_subscriptions` ; activation via la cloche du header admin
 - `public/build` est versionné : relancer `npm run build` après tout changement de classes Tailwind
+- L'app ne sert qu'à l'admin (manifest `scope: /admin`) : connexion, code de vérification et déconnexion ont leurs routes sous `/admin/connexion` et `/admin/deconnexion` (mêmes méthodes d'`AuthController`, qui détecte le contexte par l'URL)
+- Filet de sécurité : l'app installée pose `localStorage.adminApp` ; si elle atterrit sur une page de la boutique, `components/layouts/app.blade.php` la renvoie vers `/admin/commandes`
 
 ## Sécurité des comptes
 - Connexion : blocage 15 min après 5 échecs pour un couple email + IP (en plus du `throttle` de route)

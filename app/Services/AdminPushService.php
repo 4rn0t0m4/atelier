@@ -75,7 +75,7 @@ class AdminPushService
                 [
                     'title' => "Connexion à l'admin",
                     'body' => "{$user->email}\n{$device} · IP {$ip}\nCe n'est pas vous ? Changez votre mot de passe.",
-                    'url' => route('account.profile', [], false),
+                    'url' => route('admin.security.index', [], false),
                     'tag' => 'admin-login',
                 ],
             );
