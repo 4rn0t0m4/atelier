@@ -49,4 +49,11 @@ return [
         'api_key' => env('OPENAI_API_KEY'),
     ],
 
+    // Notifications push de l'admin (cles generees par `php artisan webpush:vapid`)
+    'webpush' => [
+        'subject' => env('VAPID_SUBJECT'),
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+    ],
+
 ];

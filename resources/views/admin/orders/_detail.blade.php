@@ -72,7 +72,7 @@
     </div>
 
     {{-- Addresses --}}
-    <div class="grid grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         @php
             $billingCopy = implode("\n", array_filter([
                 mb_strtoupper($order->billing_last_name) . ' ' . ucfirst(mb_strtolower($order->billing_first_name)),
@@ -98,8 +98,8 @@
                 {{ $order->billing_postcode }} {{ $order->billing_city }}<br>
                 {{ $order->billing_country }}
             </div>
-            @if($order->billing_phone)<p class="text-sm text-gray-600 pt-1">{{ $order->billing_phone }}</p>@endif
-            <p class="text-sm pt-1 text-brand-600">{{ $order->billing_email }}</p>
+            @if($order->billing_phone)<p class="text-sm pt-1"><a href="tel:{{ preg_replace('/[^0-9+]/', '', $order->billing_phone) }}" class="text-gray-600 underline decoration-gray-300">{{ $order->billing_phone }}</a></p>@endif
+            <p class="text-sm pt-1 break-all"><a href="mailto:{{ $order->billing_email }}" class="text-brand-600">{{ $order->billing_email }}</a></p>
         </div>
         @php
             $shippingCopy = $order->shipping_address_1 ? implode("\n", array_filter([

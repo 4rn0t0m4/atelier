@@ -3,10 +3,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ $title ?? 'Tableau de bord' }} | Admin Atelier d'Aubin</title>
+
+    @include('admin.layouts.pwa')
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -64,7 +66,7 @@
             }">
             @include('admin.layouts.header')
 
-            <div class="p-4 mx-auto max-w-7xl md:p-6">
+            <div class="p-4 pb-28 mx-auto max-w-7xl md:p-6 md:pb-28 lg:pb-6">
                 @if (session('success'))
                     <x-admin.alert type="success" :message="session('success')" />
                 @endif
@@ -76,6 +78,8 @@
             </div>
         </div>
     </div>
+
+    @include('admin.layouts.bottom-nav')
 
 </body>
 

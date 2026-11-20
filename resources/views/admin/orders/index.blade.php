@@ -13,11 +13,11 @@
             <div class="text-xs text-gray-500 uppercase tracking-wide">CA</div>
             <div class="mt-1 text-xl font-bold text-gray-800">{{ number_format($metrics['revenue'], 0, ',', ' ') }} &euro;</div>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-4">
+        <div class="hidden sm:block rounded-xl border border-gray-200 bg-white p-4">
             <div class="text-xs text-gray-500 uppercase tracking-wide">Articles vendus</div>
             <div class="mt-1 text-xl font-bold text-gray-800">{{ number_format($metrics['items_sold']) }}</div>
         </div>
-        <div class="rounded-xl border border-gray-200 bg-white p-4">
+        <div class="hidden sm:block rounded-xl border border-gray-200 bg-white p-4">
             <div class="text-xs text-gray-500 uppercase tracking-wide">Panier moyen</div>
             <div class="mt-1 text-xl font-bold text-gray-800">{{ number_format($metrics['average_order'], 2, ',', ' ') }} &euro;</div>
         </div>
@@ -31,8 +31,29 @@
         </div>
     </div>
 
+    {{-- Filtres rapides (mobile) --}}
+    @php
+        $chips = [
+            'processing' => 'En cours (' . $metrics['processing'] . ')',
+            'pending' => 'Non reglées (' . $metrics['pending'] . ')',
+            'shipped' => 'Expédiées',
+            'completed' => 'Terminées',
+            '' => 'Toutes',
+        ];
+    @endphp
+    <div class="md:hidden -mx-4 px-4 mb-3 flex gap-2 overflow-x-auto scrollbar-hide">
+        @foreach ($chips as $val => $lbl)
+            <a href="{{ route('admin.orders.index', ['status' => $val] + request()->only('search')) }}"
+               @class([
+                   'shrink-0 rounded-full px-3.5 py-2 text-sm font-medium border transition',
+                   'bg-brand-600 border-brand-600 text-white' => $currentStatus === $val,
+                   'bg-white border-gray-200 text-gray-600' => $currentStatus !== $val,
+               ])>{{ $lbl }}</a>
+        @endforeach
+    </div>
+
     {{-- Filters --}}
-    <div class="rounded-2xl border border-gray-200 bg-white mb-6">
+    <div class="rounded-2xl border border-gray-200 bg-white mb-4 md:mb-6">
         <form action="{{ route('admin.orders.index') }}" method="GET" class="p-4 md:p-5">
             <div class="flex flex-wrap items-end gap-3">
                 <div class="flex-1 min-w-[200px]">
@@ -41,12 +62,12 @@
                            placeholder="N° commande, email, nom..."
                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                 </div>
-                <div class="w-40">
+                <div class="hidden md:block w-40">
                     <label class="block text-xs text-gray-500 mb-1">Statut</label>
                     <select name="status" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                         <option value="">Tous</option>
                         @foreach(['pending' => 'Non reglée', 'processing' => 'En cours', 'shipped' => 'Expédiée', 'completed' => 'Terminée', 'cancelled' => 'Annulée'] as $val => $lbl)
-                            <option value="{{ $val }}" {{ (request('status') ?? (request()->hasAny(['search', 'status']) ? '' : 'processing')) === $val ? 'selected' : '' }}>{{ $lbl }}</option>
+                            <option value="{{ $val }}" {{ $currentStatus === $val ? 'selected' : '' }}>{{ $lbl }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -63,7 +84,47 @@
     {{-- Table + Panel --}}
     <div x-data="orderPanel()" @keydown.escape.window="close()">
 
-        <div class="rounded-2xl border border-gray-200 bg-white">
+        {{-- Cartes (mobile) --}}
+        <div class="md:hidden space-y-3">
+            @forelse ($orders as $order)
+                <button type="button" @click="open({{ $order->id }})"
+                    @class([
+                        'block w-full text-left rounded-xl border border-gray-200 bg-white p-4 active:bg-gray-50 transition',
+                        'border-l-4 border-l-amber-500' => $order->isExpressDelivery(),
+                    ])>
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <div class="text-sm font-semibold text-gray-800 truncate">{{ $order->billing_full_name ?: $order->billing_email }}</div>
+                            <div class="text-xs text-gray-500">{{ $order->number }} · {{ $order->created_at->format('d/m à H:i') }}</div>
+                        </div>
+                        <div class="shrink-0 text-right">
+                            <div class="text-sm font-bold text-gray-800">{{ number_format($order->total, 2, ',', ' ') }} &euro;</div>
+                            <div class="mt-1"><x-admin.badge :status="$order->status" /></div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600 line-clamp-2">
+                        {{ $order->items->map(fn ($item) => $item->quantity . ' × ' . $item->product_name)->implode(', ') ?: '—' }}
+                    </div>
+                    <div class="mt-2 flex items-center gap-2 text-xs text-gray-500">
+                        @if ($order->isExpressDelivery())
+                            <span class="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800">Express</span>
+                        @endif
+                        <span class="truncate">{{ $order->shipping_method ?? '-' }}</span>
+                    </div>
+                </button>
+            @empty
+                <div class="rounded-xl border border-gray-200 bg-white px-5 py-8 text-center text-sm text-gray-500">
+                    Aucune commande trouvée.
+                </div>
+            @endforelse
+
+            @if ($orders->hasPages())
+                <div class="pt-1">{{ $orders->links() }}</div>
+            @endif
+        </div>
+
+        {{-- Tableau (tablette et ordinateur) --}}
+        <div class="hidden md:block rounded-2xl border border-gray-200 bg-white">
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
@@ -80,7 +141,7 @@
                     </thead>
                     <tbody>
                         @forelse ($orders as $order)
-                            @php $isExpress = $order->shipping_key === 'express' || str_contains(strtolower($order->shipping_method ?? ''), 'express'); @endphp
+                            @php $isExpress = $order->isExpressDelivery(); @endphp
                             <tr @class([
                                     'border-b border-gray-100 last:border-0 hover:bg-gray-50 cursor-pointer transition',
                                     'border-l-4 border-l-amber-500' => $isExpress,
@@ -188,7 +249,7 @@
                 </div>
 
                 {{-- Panel body --}}
-                <div class="flex-1 overflow-y-auto p-5" id="panel-body">
+                <div class="flex-1 overflow-y-auto p-4 sm:p-5" id="panel-body" style="padding-bottom: calc(1.25rem + env(safe-area-inset-bottom))">
                     <template x-if="loading">
                         <div class="flex items-center justify-center py-20">
                             <svg class="animate-spin h-6 w-6 text-brand-600" viewBox="0 0 24 24">
@@ -213,6 +274,14 @@
             panelFlash: null,
             panelFlashType: 'success',
 
+            // Arrivee depuis une notification push : ?commande=ID ouvre directement le detail
+            init() {
+                const orderId = Number(new URLSearchParams(window.location.search).get('commande'));
+                if (orderId) {
+                    this.open(orderId);
+                }
+            },
+
             open(orderId) {
                 this.activeOrderId = orderId;
                 this.open_ = true;
@@ -227,6 +296,12 @@
                 this.open_ = false;
                 this.activeOrderId = null;
                 document.body.style.overflow = '';
+
+                const url = new URL(window.location.href);
+                if (url.searchParams.has('commande')) {
+                    url.searchParams.delete('commande');
+                    history.replaceState(history.state, '', url);
+                }
             },
 
             loadOrder(orderId) {

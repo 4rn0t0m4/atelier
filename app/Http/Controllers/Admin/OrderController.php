@@ -27,12 +27,16 @@ class OrderController extends Controller
 
     public function index(Request $request)
     {
-        $query = Order::with('user')->latest();
+        $query = Order::with(['user', 'items'])->latest();
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        } elseif (! $request->filled('search')) {
-            $query->where('status', 'processing');
+        // Sans filtre explicite, on affiche les commandes a preparer.
+        // « Tous » envoie un statut vide : present dans la requete, donc aucun filtre.
+        $currentStatus = $request->has('status') || $request->filled('search')
+            ? (string) $request->input('status')
+            : 'processing';
+
+        if ($currentStatus !== '') {
+            $query->where('status', $currentStatus);
         }
 
         if ($request->filled('search')) {
@@ -58,7 +62,7 @@ class OrderController extends Controller
             'processing' => Order::where('status', 'processing')->count(),
         ];
 
-        return view('admin.orders.index', compact('orders', 'metrics'));
+        return view('admin.orders.index', compact('orders', 'metrics', 'currentStatus'));
     }
 
     public function show(Request $request, Order $order)

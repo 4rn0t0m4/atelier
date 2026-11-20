@@ -6,6 +6,7 @@ use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Mail\PaymentFailed;
 use App\Models\Order;
+use App\Services\AdminPushService;
 use App\Services\OrderFulfillmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +77,8 @@ class StripeWebhookController extends Controller
             } catch (\Exception $e) {
                 Log::error("Erreur envoi email commande #{$order->number}", ['error' => $e->getMessage()]);
             }
+
+            app(AdminPushService::class)->notifyNewOrder($order);
         }
     }
 

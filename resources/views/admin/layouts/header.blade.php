@@ -40,6 +40,8 @@
                 Voir le site
             </a>
 
+            @include('admin.layouts.notifications')
+
             {{-- User dropdown --}}
             <div x-data="{ open: false }" class="relative">
                 <button @click="open = !open"

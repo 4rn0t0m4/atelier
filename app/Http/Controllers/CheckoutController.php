@@ -7,6 +7,7 @@ use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Models\Order;
 use App\Models\Setting;
+use App\Services\AdminPushService;
 use App\Services\CartService;
 use App\Services\DiscountEngine;
 use App\Services\OrderFulfillmentService;
@@ -272,6 +273,8 @@ class CheckoutController extends Controller
                 } catch (\Exception $e) {
                     Log::error("Erreur envoi email commande #{$order->number}", ['error' => $e->getMessage()]);
                 }
+
+                app(AdminPushService::class)->notifyNewOrder($order);
             }
         }
 

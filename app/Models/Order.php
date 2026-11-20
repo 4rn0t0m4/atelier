@@ -109,6 +109,15 @@ class Order extends Model
     }
 
     /**
+     * Livraison express : a preparer en priorite.
+     */
+    public function isExpressDelivery(): bool
+    {
+        return $this->shipping_key === 'express'
+            || str_contains(mb_strtolower((string) $this->shipping_method), 'express');
+    }
+
+    /**
      * Livraison en point relais (Boxtal) plutot qu'a domicile.
      */
     public function isRelayDelivery(): bool

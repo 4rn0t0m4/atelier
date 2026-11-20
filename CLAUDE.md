@@ -27,6 +27,13 @@ Le coeur du projet. Trois types de prix :
 - `quantity_based` : multiplié par la quantité
 - `percentage_based` : % du prix de base
 
+## Admin installable (PWA) et notifications push
+- Manifest `public/admin.webmanifest`, service worker `public/admin-sw.js` (scope `/admin`, push uniquement, aucun cache)
+- Clés VAPID : `php artisan webpush:vapid` puis `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` dans `.env`
+- `AdminPushService::notifyNewOrder()` est appelé aux 3 points de confirmation de paiement (webhook Stripe, page success, PayPal) et ne lève jamais d'exception
+- Abonnements par appareil dans `push_subscriptions` ; activation via la cloche du header admin
+- `public/build` est versionné : relancer `npm run build` après tout changement de classes Tailwind
+
 ## Base de données legacy (migration)
 - Connexion `wp_legacy` dans config/database.php
 - Prefix tables : `mod745_`

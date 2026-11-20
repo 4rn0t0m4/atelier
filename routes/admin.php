@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\PushSubscriptionController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StatsController;
 use App\Http\Controllers\Admin\TagController;
@@ -44,6 +45,11 @@ Route::post('commandes/{order}/create-shipment', [OrderController::class, 'creat
 Route::get('commandes/{order}/label', [OrderController::class, 'label'])->name('admin.orders.label');
 Route::delete('commandes/{order}/reset-shipment', [OrderController::class, 'resetShipment'])->name('admin.orders.reset-shipment');
 Route::post('commandes/{order}/renvoyer-email', [OrderController::class, 'resendEmail'])->name('admin.orders.resend-email');
+
+// Notifications push (app installee)
+Route::post('notifications/abonnement', [PushSubscriptionController::class, 'store'])->name('admin.push.subscribe');
+Route::delete('notifications/abonnement', [PushSubscriptionController::class, 'destroy'])->name('admin.push.unsubscribe');
+Route::post('notifications/test', [PushSubscriptionController::class, 'test'])->name('admin.push.test');
 
 // Export
 Route::get('export', [ExportController::class, 'index'])->name('admin.export.index');

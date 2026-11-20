@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Models\Order;
+use App\Services\AdminPushService;
 use App\Services\CartService;
 use App\Services\OrderFulfillmentService;
 use App\Services\PayPalService;
@@ -117,6 +118,8 @@ class PayPalController extends Controller
         } catch (\Exception $e) {
             Log::error("Erreur envoi email commande #{$order->number}", ['error' => $e->getMessage()]);
         }
+
+        app(AdminPushService::class)->notifyNewOrder($order);
 
         // Vider le panier
         $this->cart->clear();
