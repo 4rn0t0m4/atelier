@@ -145,6 +145,7 @@ class PushNotificationTest extends TestCase
         $this->assertStringContainsString('2 × Planche gravée', $payload['body']);
         $this->assertSame("/admin/commandes?commande={$order->id}", $payload['url']);
         $this->assertSame(1, $payload['badgeCount']);
+        $this->assertArrayNotHasKey('silent', $payload);
     }
 
     public function test_expired_subscription_is_removed(): void
@@ -197,5 +198,20 @@ class PushNotificationTest extends TestCase
         $this->actingAs($admin)->postJson(route('admin.push.test'))->assertOk()->assertJsonStructure(['success']);
 
         $this->assertSame([self::ENDPOINT], array_column($queued, 'endpoint'));
+        $this->assertArrayNotHasKey('silent', $queued[0]['payload']);
+    }
+
+    public function test_login_alert_is_silent_so_only_sales_ring(): void
+    {
+        $admin = $this->admin();
+        $this->subscriptionFor($admin);
+
+        $queued = [];
+        $this->fakeWebPush([], $queued);
+
+        app(AdminPushService::class)->notifyAdminLogin($admin, 'Safari sur iPhone', '127.0.0.1');
+
+        $this->assertCount(1, $queued);
+        $this->assertTrue($queued[0]['payload']['silent']);
     }
 }

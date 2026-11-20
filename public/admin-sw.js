@@ -22,7 +22,11 @@ self.addEventListener('push', (event) => {
             badge: '/images/pwa/badge-96.png',
             // Une meme commande notifiee deux fois ne s'affiche qu'une fois
             tag: data.tag,
-            renotify: Boolean(data.tag),
+            // Android n'offre qu'une categorie, donc un seul son, par app web : les
+            // notifications silencieuses le reservent aux ventes. Une notification
+            // silencieuse ne peut pas etre « renotifiee » (le navigateur la refuse).
+            silent: Boolean(data.silent),
+            renotify: Boolean(data.tag) && !data.silent,
             data: { url: data.url || '/admin/commandes' },
         }),
     ];

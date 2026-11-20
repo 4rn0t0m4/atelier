@@ -32,6 +32,7 @@ Le coeur du projet. Trois types de prix :
 - Clés VAPID : `php artisan webpush:vapid` puis `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` dans `.env`
 - `AdminPushService::notifyNewOrder()` est appelé aux 3 points de confirmation de paiement (webhook Stripe, page success, PayPal) et ne lève jamais d'exception
 - Abonnements par appareil dans `push_subscriptions` ; activation via la cloche du header admin
+- Android n'offre qu'une catégorie de notification (donc un seul son) par app web : les alertes de connexion partent avec `silent: true` pour que le son réglé sur le téléphone ne sonne que pour les ventes
 - `public/build` est versionné : relancer `npm run build` après tout changement de classes Tailwind
 - L'app ne sert qu'à l'admin (manifest `scope: /admin`) : connexion, code de vérification et déconnexion ont leurs routes sous `/admin/connexion` et `/admin/deconnexion` (mêmes méthodes d'`AuthController`, qui détecte le contexte par l'URL)
 - Filet de sécurité : l'app installée pose `localStorage.adminApp` ; si elle atterrit sur une page de la boutique, `components/layouts/app.blade.php` la renvoie vers `/admin/commandes`

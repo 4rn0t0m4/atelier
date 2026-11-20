@@ -77,6 +77,8 @@ class AdminPushService
                     'body' => "{$user->email}\n{$device} · IP {$ip}\nCe n'est pas vous ? Changez votre mot de passe.",
                     'url' => route('admin.security.index', [], false),
                     'tag' => 'admin-login',
+                    // Le son de l'app est reserve aux ventes (voir admin-sw.js)
+                    'silent' => true,
                 ],
             );
         } catch (\Throwable $e) {
