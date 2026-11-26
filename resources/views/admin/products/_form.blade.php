@@ -294,10 +294,11 @@
                 <select name="category_id" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
                     <option value="">-- Aucune --</option>
                     @php
-                        $renderOptions = function($items, $depth = 0) use (&$renderOptions, $product) {
+                        $selectedCategoryId = old('category_id', $product->category_id ?? '');
+                        $renderOptions = function($items, $depth = 0) use (&$renderOptions, $selectedCategoryId) {
                             foreach ($items as $cat) {
                                 $prefix = str_repeat('— ', $depth);
-                                $selected = old('category_id', $product->category_id ?? '') == $cat->id ? 'selected' : '';
+                                $selected = $selectedCategoryId == $cat->id ? 'selected' : '';
                                 echo "<option value=\"{$cat->id}\" {$selected}>{$prefix}{$cat->name}</option>";
                                 if ($cat->children->isNotEmpty()) {
                                     $renderOptions($cat->children->sortBy('sort_order'), $depth + 1);
