@@ -9,6 +9,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\ReshipmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LegacyRedirectController;
 use App\Http\Controllers\PageController;
@@ -39,6 +40,15 @@ Route::delete('/panier/{key}', [CartController::class, 'remove'])->name('cart.re
 Route::get('/commande', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/commande', [CheckoutController::class, 'store'])->name('checkout.store')->middleware('throttle:10,1');
 Route::get('/commande/succes', [CheckoutController::class, 'success'])->name('checkout.success');
+
+// Reexpedition en relais d'un colis retourne (lien recu par email)
+Route::prefix('/reexpedition')->name('reshipment.')->middleware('throttle:30,1')->group(function () {
+    Route::get('/{token}', [ReshipmentController::class, 'show'])->name('show');
+    Route::post('/{token}', [ReshipmentController::class, 'store'])->name('store');
+    Route::get('/{token}/succes', [ReshipmentController::class, 'success'])->name('success');
+    Route::post('/{token}/paypal/create-order', [ReshipmentController::class, 'paypalCreateOrder'])->name('paypal.create-order');
+    Route::post('/{token}/paypal/capture-order', [ReshipmentController::class, 'paypalCaptureOrder'])->name('paypal.capture-order');
+});
 
 // Stripe webhook
 Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);

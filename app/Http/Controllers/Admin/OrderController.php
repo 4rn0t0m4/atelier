@@ -67,7 +67,7 @@ class OrderController extends Controller
 
     public function show(Request $request, Order $order)
     {
-        $order->load(['user', 'items.product', 'items.addons']);
+        $order->load(['user', 'items.product', 'items.addons', 'reshipments']);
 
         if ($request->ajax()) {
             return view('admin.orders._detail', compact('order'));

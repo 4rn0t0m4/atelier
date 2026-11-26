@@ -6,8 +6,10 @@ use App\Mail\NewOrderAdmin;
 use App\Mail\OrderConfirmation;
 use App\Mail\PaymentFailed;
 use App\Models\Order;
+use App\Models\OrderReshipment;
 use App\Services\AdminPushService;
 use App\Services\OrderFulfillmentService;
+use App\Services\ReshipmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +47,15 @@ class StripeWebhookController extends Controller
 
     private function handlePaymentSucceeded(object $paymentIntent): void
     {
+        // Reexpedition en relais : le PaymentIntent est rattache a la demande, pas a la commande
+        $reshipment = OrderReshipment::where('stripe_payment_intent_id', $paymentIntent->id)->first();
+
+        if ($reshipment) {
+            app(ReshipmentService::class)->confirmPayment($reshipment);
+
+            return;
+        }
+
         $order = DB::transaction(function () use ($paymentIntent) {
             $order = Order::where('stripe_payment_intent_id', $paymentIntent->id)
                 ->lockForUpdate()
@@ -84,6 +95,12 @@ class StripeWebhookController extends Controller
 
     private function handlePaymentFailed(object $paymentIntent): void
     {
+        if (OrderReshipment::where('stripe_payment_intent_id', $paymentIntent->id)->exists()) {
+            Log::warning('Réexpédition : paiement échoué', ['payment_intent_id' => $paymentIntent->id]);
+
+            return;
+        }
+
         $order = Order::where('stripe_payment_intent_id', $paymentIntent->id)->first();
 
         if (! $order) {

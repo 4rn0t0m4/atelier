@@ -59,3 +59,10 @@ npm run dev                    # Vite dev
 php artisan migrate            # Migrations
 php artisan migrate:wp-XXX     # Commandes de migration WP
 ```
+
+## Réexpédition en relais (colis retourné)
+- Table `order_reshipments` : une demande par lien, statut `pending` / `paid` / `cancelled`, montant fixé par l'admin
+- Admin : bloc « Réexpédition en relais » sur la fiche commande (`admin/orders/_reshipment.blade.php`) → crée le lien, envoie l'email `ReshipmentRequest`, peut renvoyer ou annuler ; créer une nouvelle demande annule la précédente
+- Client : `/reexpedition/{token}` → choix du relais (partiels `checkout/_relay-picker` + `checkout/_relay-map`, partagés avec le checkout) puis paiement Stripe ou PayPal (`ReshipmentController`)
+- `ReshipmentService::confirmPayment()` (webhook Stripe, page succès, capture PayPal) : remet la commande en `processing` avec le nouveau relais, efface étiquette/suivi Boxtal et `shipped_at`, ajoute une ligne à `customer_note`, envoie `ReshipmentPaid` + `ReshipmentPaidAdmin` + push ; l'admin recrée ensuite l'étiquette Boxtal normalement
+- Le montant réglé n'est pas ajouté au total de la commande ni à la facture

@@ -56,6 +56,19 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
+    public function reshipments()
+    {
+        return $this->hasMany(OrderReshipment::class)->latest();
+    }
+
+    /**
+     * Demande de reexpedition en attente de paiement, s'il y en a une.
+     */
+    public function pendingReshipment(): ?OrderReshipment
+    {
+        return $this->reshipments->firstWhere('status', OrderReshipment::STATUS_PENDING);
+    }
+
     public function isPaid(): bool
     {
         return $this->paid_at !== null;

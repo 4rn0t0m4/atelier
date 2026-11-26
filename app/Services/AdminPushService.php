@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Models\OrderReshipment;
 use App\Models\PushSubscription;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +46,36 @@ class AdminPushService
     /**
      * Envoie une notification de test aux appareils d'un admin.
      */
+    /**
+     * Une reexpedition en relais vient d'etre reglee par le client.
+     */
+    public function notifyReshipmentPaid(OrderReshipment $reshipment): int
+    {
+        try {
+            $order = $reshipment->order;
+
+            return $this->send(
+                PushSubscription::forAdmins()->get(),
+                [
+                    'title' => 'Réexpédition réglée · ' . $reshipment->formatted_amount,
+                    'body' => implode("\n", array_filter([
+                        trim($order->billing_full_name . ' · ' . $order->number, ' ·'),
+                        $reshipment->relay_point_name ? 'Relais : ' . $reshipment->relay_point_name : null,
+                        'Nouvelle étiquette à créer',
+                    ])),
+                    'url' => route('admin.orders.show', $order, false),
+                    'tag' => 'reshipment-' . $reshipment->id,
+                    'badgeCount' => Order::where('status', 'processing')->count(),
+                ],
+                ['topic' => 'reshipment-' . $reshipment->id],
+            );
+        } catch (\Throwable $e) {
+            Log::error("Erreur notification push réexpédition #{$reshipment->order->number}", ['error' => $e->getMessage()]);
+
+            return 0;
+        }
+    }
+
     public function sendTest(User $user): int
     {
         try {

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderReshipmentController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PushSubscriptionController;
@@ -50,6 +51,9 @@ Route::post('commandes/{order}/create-shipment', [OrderController::class, 'creat
 Route::get('commandes/{order}/label', [OrderController::class, 'label'])->name('admin.orders.label');
 Route::delete('commandes/{order}/reset-shipment', [OrderController::class, 'resetShipment'])->name('admin.orders.reset-shipment');
 Route::post('commandes/{order}/renvoyer-email', [OrderController::class, 'resendEmail'])->name('admin.orders.resend-email');
+Route::post('commandes/{order}/reexpeditions', [OrderReshipmentController::class, 'store'])->name('admin.orders.reshipments.store');
+Route::post('commandes/{order}/reexpeditions/{reshipment}/renvoyer', [OrderReshipmentController::class, 'resend'])->name('admin.orders.reshipments.resend');
+Route::delete('commandes/{order}/reexpeditions/{reshipment}', [OrderReshipmentController::class, 'cancel'])->name('admin.orders.reshipments.cancel');
 
 // Notifications push (app installee)
 Route::post('notifications/abonnement', [PushSubscriptionController::class, 'store'])->name('admin.push.subscribe');

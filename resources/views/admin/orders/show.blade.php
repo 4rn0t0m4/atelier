@@ -340,6 +340,11 @@
                 </div>
             @endif
 
+            {{-- Reexpedition en relais (colis retourne) --}}
+            @if($order->isPaid())
+                @include('admin.orders._reshipment', ['order' => $order])
+            @endif
+
             {{-- Timeline --}}
             <div class="rounded-2xl border border-gray-200 bg-white p-5">
                 <h3 class="text-sm font-semibold text-gray-800 mb-3">Chronologie</h3>
